@@ -1,0 +1,59 @@
+{
+  "expo": {
+    "name": "CleanDeck",
+    "slug": "cleandeck-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.cleandeck.app",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "CleanDeck requires access to your photo and video library so you can view, inspect, and organize your media into keep and delete queues entirely on your device.",
+        "NSPhotoLibraryAddUsageDescription": "CleanDeck needs permission to modify your library so you can confirm and move left-swiped media to your system's Recently Deleted folder."
+      }
+    },
+    "android": {
+      "package": "com.cleandeck.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0D0D0D",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "READ_MEDIA_IMAGES",
+        "READ_MEDIA_VIDEO",
+        "READ_MEDIA_VISUAL_USER_SELECTED",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "ACCESS_MEDIA_LOCATION"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "CleanDeck requires access to your photo and video library so you can view, inspect, and organize your media into keep and delete queues entirely on your device.",
+          "savePhotosPermission": "CleanDeck needs permission to modify your library so you can confirm and move left-swiped media to your system's Recently Deleted folder.",
+          "isAccessMediaLocationEnabled": true
+        }
+      ],
+      "expo-video",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#0D0D0D",
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain"
+        }
+      ]
+    ],
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
