@@ -8,12 +8,14 @@ on:
 
 jobs:
   build:
+    name: Generate & Compile Android APK
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -37,12 +39,12 @@ jobs:
       - name: Make Gradlew executable
         run: chmod +x android/gradlew
 
-      - name: Build Debug APK
+      - name: Compile Debug APK
         run: |
           cd android
           ./gradlew assembleDebug --no-daemon --stacktrace
 
-      - name: Upload APK Artifact
+      - name: Upload CleanDeck Debug APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: CleanDeck-Debug-APK
