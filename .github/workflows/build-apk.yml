@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Generate & Compile Android APK
+    name: Generate & Compile Lightweight Release APK
     runs-on: ubuntu-latest
 
     steps:
@@ -33,17 +33,21 @@ jobs:
       - name: Prebuild native Android project
         run: npx expo prebuild --platform android --clean
 
+      - name: Ensure universal debug signing for release
+        run: |
+          sed -i 's/signingConfig signingConfigs.release/signingConfig signingConfigs.debug/g' android/app/build.gradle || true
+
       - name: Make Gradlew executable
         run: chmod +x android/gradlew
 
-      - name: Compile Debug APK
+      - name: Compile Release APK (arm64-v8a + Hermes minification)
         run: |
           cd android
-          ./gradlew assembleDebug --no-daemon --stacktrace
+          ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a --no-daemon --stacktrace
 
-      - name: Upload CleanDeck Debug APK artifact
+      - name: Upload CleanDeck Release APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: CleanDeck-Debug-APK
-          path: android/app/build/outputs/apk/debug/*.apk
+          name: CleanDeck-Release-APK
+          path: android/app/build/outputs/apk/release/*.apk
           retention-days: 14
