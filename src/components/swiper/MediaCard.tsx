@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import {
   Image,
+  Platform,
   StyleSheet,
   Text,
   View,
@@ -27,7 +28,7 @@ interface MediaCardProps {
   onZoomChange?: (isZoomed: boolean) => void;
 }
 
-export const MediaCard: React.FC<MediaCardProps> = ({
+const MediaCardInner: React.FC<MediaCardProps> = ({
   asset,
   isActive,
   cardWidth,
@@ -141,19 +142,33 @@ export const MediaCard: React.FC<MediaCardProps> = ({
       {/* 9:16 Inner Canvas with #0D0D0D neutral dark background */}
       <View style={styles.canvas}>
         {/* Media Layer with Inspection Zoom */}
-        <GestureDetector gesture={inspectionGestures}>
-          <Animated.View style={[styles.mediaContainer, mediaZoomAnimatedStyle]}>
-            {isVideo && isActive ? (
-              <VideoCardContent uri={asset.uri} />
-            ) : (
-              <Image
-                source={{ uri: asset.uri }}
-                style={styles.media}
-                resizeMode="contain"
-              />
-            )}
-          </Animated.View>
-        </GestureDetector>
+        {isActive ? (
+          <GestureDetector gesture={inspectionGestures}>
+            <Animated.View style={[styles.mediaContainer, mediaZoomAnimatedStyle]}>
+              {isVideo ? (
+                <VideoCardContent uri={asset.uri} isActive={isActive} />
+              ) : (
+                <Image
+                  source={{ uri: asset.uri }}
+                  style={styles.media}
+                  resizeMode="contain"
+                  resizeMethod="resize"
+                  fadeDuration={0}
+                />
+              )}
+            </Animated.View>
+          </GestureDetector>
+        ) : (
+          <View style={styles.mediaContainer}>
+            <Image
+              source={{ uri: asset.uri }}
+              style={styles.media}
+              resizeMode="contain"
+              resizeMethod="resize"
+              fadeDuration={0}
+            />
+          </View>
+        )}
 
         {/* Top Badges Header */}
         <View style={styles.topBadgeRow} pointerEvents="none">
@@ -214,7 +229,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.5,
     shadowRadius: 16,
-    elevation: 8,
+    elevation: Platform.OS === 'android' ? 2 : 8,
   },
   canvas: {
     flex: 1,
@@ -342,3 +357,5 @@ const styles = StyleSheet.create({
     letterSpacing: 1.5,
   },
 });
+
+export const MediaCard = React.memo(MediaCardInner);

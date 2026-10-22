@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Dimensions,
   Modal,
   StyleSheet,
   Text,
@@ -22,10 +21,8 @@ interface StepData {
   title: string;
   subtitle: string;
   illustrationType: 'swipe' | 'queue' | 'shield';
-  bullets: Array<{ icon: string; title: string; desc: string }>;
+  bullets: { icon: string; title: string; desc: string }[];
 }
-
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const STEPS: StepData[] = [
   {
@@ -229,7 +226,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 <Text style={styles.demoQueueIcon}>📂</Text>
                 <Text style={styles.demoQueueTitle}>Staged in Temporary Folder</Text>
                 <Text style={styles.demoQueueSubtitle}>
-                  Nothing leaves your phone until you press "Delete All"
+                  Nothing leaves your phone until you press &quot;Delete All&quot;
                 </Text>
               </View>
             </View>

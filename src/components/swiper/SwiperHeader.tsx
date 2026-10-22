@@ -10,7 +10,7 @@ interface SwiperHeaderProps {
   onOpenReviewQueue?: () => void;
 }
 
-export const SwiperHeader: React.FC<SwiperHeaderProps> = ({
+const SwiperHeaderInner: React.FC<SwiperHeaderProps> = ({
   pendingDeleteCount,
   pendingDeleteSizeFormatted,
   onPause,
@@ -85,6 +85,8 @@ export const SwiperHeader: React.FC<SwiperHeaderProps> = ({
     </View>
   );
 };
+
+export const SwiperHeader = React.memo(SwiperHeaderInner);
 
 const styles = StyleSheet.create({
   container: {

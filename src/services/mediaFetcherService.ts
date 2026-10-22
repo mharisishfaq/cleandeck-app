@@ -249,7 +249,7 @@ export async function deleteMediaAssets(
       try {
         await MediaLibrary.deleteAssetsAsync([id]);
         anySuccess = true;
-      } catch (innerErr) {
+      } catch {
         // Asset already removed or inaccessible, safely skip
         console.warn(`[MediaFetcherService] Skipped already removed asset ${id}`);
         anySuccess = true;

@@ -49,7 +49,7 @@ export const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
             <Text style={styles.highlightText}>
               {itemCount} {itemCount === 1 ? 'item' : 'items'} ({sizeFormatted})
             </Text>{' '}
-            to your system's Recently Deleted album.
+            to your system&apos;s Recently Deleted album.
           </Text>
 
           {/* System Safety Callout */}

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Alert,
   StyleSheet,
@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Animated, {
+import {
   Extrapolation,
   interpolate,
   runOnJS,
@@ -92,6 +92,23 @@ export const SwiperDeck: React.FC<SwiperDeckProps> = ({
   const [isSwipingProgrammatically, setIsSwipingProgrammatically] = useState(false);
   const [isMediaZoomed, setIsMediaZoomed] = useState(false);
 
+  // Global deduplication: track every asset ID ever shown to the user
+  const seenAssetIds = useRef<Set<string>>(new Set());
+
+  // Ref-based snapshot of pendingDeleteQueue IDs for sync effect (avoids dependency churn)
+  const pendingDeleteIdsRef = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    pendingDeleteIdsRef.current = new Set(pendingDeleteQueue.map((a) => a.id));
+  }, [pendingDeleteQueue]);
+
+  // Track how many initialAssets have already been synced to avoid re-iterating the full array
+  const lastSyncedLengthRef = useRef(0);
+
+  // Seed seenIds with any initial pending queue items (resumed session)
+  useEffect(() => {
+    initialPendingQueue.forEach((a) => seenAssetIds.current.add(a.id));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Modal & Notification States
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
   const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
@@ -101,6 +118,7 @@ export const SwiperDeck: React.FC<SwiperDeckProps> = ({
   // Handlers for Temporary Folder Queue Inspector with immediate storage synchronization
   const handleRestoreFromReview = useCallback(
     (assetId: string) => {
+      seenAssetIds.current.delete(assetId);
       setPendingDeleteQueue((prevPending) => {
         const restored = prevPending.find((a) => a.id === assetId);
         const updatedPending = prevPending.filter((a) => a.id !== assetId);
@@ -133,6 +151,7 @@ export const SwiperDeck: React.FC<SwiperDeckProps> = ({
   const handleRestoreAllFromReview = useCallback(() => {
     setPendingDeleteQueue((prevPending) => {
       const restoredItems = [...prevPending];
+      restoredItems.forEach((a) => seenAssetIds.current.delete(a.id));
       setQueue((prevQueue) => {
         const updatedQueue = [...restoredItems, ...prevQueue];
         const newReviewedCount = Math.max(0, reviewedCount - restoredItems.length);
@@ -157,35 +176,61 @@ export const SwiperDeck: React.FC<SwiperDeckProps> = ({
     setIsReviewModalVisible(false);
   }, [reviewedCount, keptCount, onSessionUpdate]);
 
-  // Calculate live reclaimable space
-  const totalReclaimableBytes = pendingDeleteQueue.reduce(
-    (sum, item) => sum + item.estimatedSizeBytes,
-    0
+  // Calculate live reclaimable space (memoized to avoid recalculating every render)
+  const totalReclaimableBytes = useMemo(
+    () => pendingDeleteQueue.reduce((sum, item) => sum + item.estimatedSizeBytes, 0),
+    [pendingDeleteQueue]
   );
-  const reclaimableSizeFormatted = formatBytes(totalReclaimableBytes);
+  const reclaimableSizeFormatted = useMemo(
+    () => formatBytes(totalReclaimableBytes),
+    [totalReclaimableBytes]
+  );
 
-  // Sync incoming assets from media fetcher into local queue
-  const prevAssetsRef = useRef<string>('');
+  // Sync incoming assets from media fetcher into local queue (with global dedup)
+  // Only processes NEW assets (from lastSyncedLength onward) to avoid O(n) on every batch.
+  // Uses pendingDeleteIdsRef instead of pendingDeleteQueue to avoid re-triggering on every swipe.
   useEffect(() => {
-    const assetIds = initialAssets.map((a) => a.id).join(',');
-    if (assetIds !== prevAssetsRef.current) {
-      prevAssetsRef.current = assetIds;
-      setQueue((prevQueue) => {
-        const existingIds = new Set(prevQueue.map((a) => a.id));
-        const historyIds = new Set(history.map((h) => h.asset.id));
-        const newItems = initialAssets.filter(
-          (a) => !existingIds.has(a.id) && !historyIds.has(a.id)
-        );
-        return [...prevQueue, ...newItems];
-      });
+    if (initialAssets.length === 0) return;
+
+    if (lastSyncedLengthRef.current > initialAssets.length) {
+      lastSyncedLengthRef.current = 0;
     }
-  }, [initialAssets, history]);
+    const startIdx = lastSyncedLengthRef.current;
+    if (startIdx >= initialAssets.length) return; // nothing new
 
-  // Trigger next batch fetch when fewer than 5 items remain in the deck queue
+    const newSlice = initialAssets.slice(startIdx);
+    lastSyncedLengthRef.current = initialAssets.length;
+
+    setQueue((prevQueue) => {
+      const existingIds = new Set(prevQueue.map((a) => a.id));
+      const pendingIds = pendingDeleteIdsRef.current;
+      const newItems = newSlice.filter(
+        (a) =>
+          !existingIds.has(a.id) &&
+          !seenAssetIds.current.has(a.id) &&
+          !pendingIds.has(a.id)
+      );
+      if (newItems.length === 0) return prevQueue;
+      return [...prevQueue, ...newItems];
+    });
+  }, [initialAssets]);
+
+  // Trigger next batch fetch when fewer than 5 items remain (debounced)
+  const batchFetchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
+    if (batchFetchTimerRef.current) {
+      clearTimeout(batchFetchTimerRef.current);
+    }
     if (queue.length > 0 && queue.length < 5 && hasNextPage) {
-      onLoadNextBatch();
+      batchFetchTimerRef.current = setTimeout(() => {
+        onLoadNextBatch();
+      }, 150);
     }
+    return () => {
+      if (batchFetchTimerRef.current) {
+        clearTimeout(batchFetchTimerRef.current);
+      }
+    };
   }, [queue.length, hasNextPage, onLoadNextBatch]);
 
   // 3. Shared Values for 60fps Physical Gestures & Haptic Tracking
@@ -199,6 +244,9 @@ export const SwiperDeck: React.FC<SwiperDeckProps> = ({
       setQueue((prevQueue) => {
         if (prevQueue.length === 0) return prevQueue;
         const [swipedCard, ...remainingQueue] = prevQueue;
+
+        // Mark this asset as permanently processed (prevents re-entry from stale arrays)
+        seenAssetIds.current.add(swipedCard.id);
 
         // Cap history to 15 items to prevent unbounded memory growth
         setHistory((prevHist) => {
@@ -294,6 +342,7 @@ export const SwiperDeck: React.FC<SwiperDeckProps> = ({
       const lastItem = prevHistory[lastIndex];
       const newHistory = prevHistory.slice(0, lastIndex);
 
+      seenAssetIds.current.delete(lastItem.asset.id);
       setQueue((prevQueue) => [lastItem.asset, ...prevQueue]);
       setReviewedCount((prev) => Math.max(0, prev - 1));
 
@@ -566,6 +615,7 @@ export const SwiperDeck: React.FC<SwiperDeckProps> = ({
             {/* Card 2: Buffer Card */}
             {card2 && (
               <MediaCard
+                key={card2.id}
                 asset={card2}
                 isActive={false}
                 cardWidth={cardWidth}
@@ -577,6 +627,7 @@ export const SwiperDeck: React.FC<SwiperDeckProps> = ({
             {/* Card 1: Next Card */}
             {card1 && (
               <MediaCard
+                key={card1.id}
                 asset={card1}
                 isActive={false}
                 cardWidth={cardWidth}
@@ -587,8 +638,9 @@ export const SwiperDeck: React.FC<SwiperDeckProps> = ({
 
             {/* Card 0: Active Top Card with Pan Gesture and Zoom Inspection */}
             {card0 && (
-              <GestureDetector gesture={panGesture}>
+              <GestureDetector gesture={panGesture} key={card0.id}>
                 <MediaCard
+                  key={card0.id}
                   asset={card0}
                   isActive={true}
                   cardWidth={cardWidth}

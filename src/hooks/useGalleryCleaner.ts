@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { PermissionStatus } from 'expo';
 import {
   checkGalleryPermissions,
@@ -32,7 +32,6 @@ export function useGalleryCleaner(options: UseGalleryCleanerOptions = {}) {
     batchSize = 20,
     initialSortDirection = 'desc',
     mediaType = 'all',
-    autoLoadOnGranted = true,
   } = options;
 
   const [permission, setPermission] = useState<GalleryPermissionState>({
@@ -96,10 +95,14 @@ export function useGalleryCleaner(options: UseGalleryCleanerOptions = {}) {
     [batchSize, mediaType, sortDirection]
   );
 
-  // 4. Load Next Batch Using Cursor
-  const loadNextBatch = useCallback(async () => {
-    if (!hasNextPage || !cursor || isLoadingNext) return;
+  // 4. Load Next Batch Using Cursor (with ref-based lock to prevent overlapping fetches)
+  const isFetchingRef = useRef(false);
 
+  const loadNextBatch = useCallback(async () => {
+    // Ref-based lock prevents concurrent fetches when React state hasn't settled yet
+    if (!hasNextPage || !cursor || isFetchingRef.current) return;
+
+    isFetchingRef.current = true;
     setIsLoadingNext(true);
     setError(null);
 
@@ -111,8 +114,12 @@ export function useGalleryCleaner(options: UseGalleryCleanerOptions = {}) {
         mediaType,
       });
 
-      // Append to loaded list
-      setAssets((prev) => [...prev, ...result.assets]);
+      // Deduplicate: only append assets whose IDs don't already exist
+      setAssets((prev) => {
+        const existingIds = new Set(prev.map((a) => a.id));
+        const uniqueNew = result.assets.filter((a) => !existingIds.has(a.id));
+        return [...prev, ...uniqueNew];
+      });
       setCursor(result.cursor);
       setHasNextPage(result.hasNextPage);
       setTotalCount(result.totalCount);
@@ -120,9 +127,10 @@ export function useGalleryCleaner(options: UseGalleryCleanerOptions = {}) {
     } catch (err: any) {
       setError(err?.message || 'Failed to fetch subsequent media batch.');
     } finally {
+      isFetchingRef.current = false;
       setIsLoadingNext(false);
     }
-  }, [batchSize, cursor, hasNextPage, isLoadingNext, mediaType, sortDirection]);
+  }, [batchSize, cursor, hasNextPage, mediaType, sortDirection]);
 
   // 5. Delete specific assets (e.g., from user swiping left or cleaning selection)
   const deleteAssets = useCallback(

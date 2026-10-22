@@ -1,17 +1,28 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useVideoPlayer, VideoView } from 'expo-video';
 
 interface VideoCardContentProps {
   uri: string;
+  isActive?: boolean;
 }
 
-export const VideoCardContent: React.FC<VideoCardContentProps> = ({ uri }) => {
+const VideoCardContentInner: React.FC<VideoCardContentProps> = ({ uri, isActive = true }) => {
   const player = useVideoPlayer(uri, (p) => {
     p.loop = true;
     p.muted = true;
-    p.play();
+    // Don't auto-play — we control play/pause based on isActive
   });
+
+  // Play only when this card is the active top card; pause otherwise to save resources
+  useEffect(() => {
+    if (!player) return;
+    if (isActive) {
+      player.play();
+    } else {
+      player.pause();
+    }
+  }, [isActive, player]);
 
   return (
     <View style={styles.container}>
@@ -24,6 +35,8 @@ export const VideoCardContent: React.FC<VideoCardContentProps> = ({ uri }) => {
     </View>
   );
 };
+
+export const VideoCardContent = React.memo(VideoCardContentInner);
 
 const styles = StyleSheet.create({
   container: {

@@ -11,7 +11,7 @@ interface BottomControlsProps {
   disabled?: boolean;
 }
 
-export const BottomControls: React.FC<BottomControlsProps> = ({
+const BottomControlsInner: React.FC<BottomControlsProps> = ({
   onTrash,
   onUndo,
   onKeep,
@@ -74,6 +74,8 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
     </View>
   );
 };
+
+export const BottomControls = React.memo(BottomControlsInner);
 
 const styles = StyleSheet.create({
   container: {

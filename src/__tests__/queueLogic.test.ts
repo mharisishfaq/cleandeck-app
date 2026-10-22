@@ -154,4 +154,43 @@ describe('Staged Deletion Queue Mathematics & State Management', () => {
       expect(initialQueue).toHaveLength(3);
     });
   });
+
+  describe('Deduplication & Seen Asset Protection (Duplicate Card Prevention)', () => {
+    it('prevents already-swiped cards from re-entering the queue when incoming batches arrive', () => {
+      const seenAssetIds = new Set<string>();
+      let queue: MediaAsset[] = [assetA, assetB];
+
+      // User swipes assetA (Keep)
+      seenAssetIds.add(assetA.id);
+      queue = queue.slice(1); // queue now has [assetB]
+
+      // Next batch arrives containing [assetA, assetB, assetC] (e.g. from camera roll pagination)
+      const incomingBatch = [assetA, assetB, assetC];
+      const existingQueueIds = new Set(queue.map((a) => a.id));
+
+      const newItemsToQueue = incomingBatch.filter(
+        (a) => !existingQueueIds.has(a.id) && !seenAssetIds.has(a.id)
+      );
+
+      // Only assetC should be queued — assetA is ignored because it was already seen,
+      // and assetB is ignored because it is already in the queue.
+      expect(newItemsToQueue).toEqual([assetC]);
+      queue = [...queue, ...newItemsToQueue];
+      expect(queue.map((a) => a.id)).toEqual(['asset_b', 'asset_c']);
+    });
+
+    it('un-marks seenAssetIds when an item is restored or undone so it can be reviewed again', () => {
+      const seenAssetIds = new Set<string>([assetA.id, assetB.id]);
+
+      // Undo assetB
+      seenAssetIds.delete(assetB.id);
+      expect(seenAssetIds.has(assetB.id)).toBe(false);
+      expect(seenAssetIds.has(assetA.id)).toBe(true);
+
+      // Restore all
+      const restored = [assetA];
+      restored.forEach((item) => seenAssetIds.delete(item.id));
+      expect(seenAssetIds.size).toBe(0);
+    });
+  });
 });

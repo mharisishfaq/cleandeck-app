@@ -1,5 +1,4 @@
 import { PermissionStatus } from 'expo';
-import type { PermissionResponse } from 'expo-media-library/legacy';
 
 export type CleanMediaType = 'photo' | 'video' | 'all';
 export type SortDirection = 'desc' | 'asc';
