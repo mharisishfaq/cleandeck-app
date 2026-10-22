@@ -2,6 +2,7 @@ import React from 'react';
 import {
   ActivityIndicator,
   Modal,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -36,28 +37,25 @@ export const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
         <View style={styles.modalCard}>
           {/* Warning Icon Badge */}
           <View style={styles.iconCircle}>
-            <Text style={styles.iconText}>🗑️</Text>
+            <Text style={styles.iconText}>[ ! ]</Text>
           </View>
 
           {/* Title */}
-          <Text style={styles.title}>Confirm Deletion</Text>
+          <Text style={styles.title}>[ CONFIRM PURGE ]</Text>
 
           {/* Body */}
           <Text style={styles.body}>
-            Are you sure you want to delete all the left-swiped media? This will
-            move{' '}
+            Requested purge of{' '}
             <Text style={styles.highlightText}>
-              {itemCount} {itemCount === 1 ? 'item' : 'items'} ({sizeFormatted})
+              {itemCount} {itemCount === 1 ? 'ITEM' : 'ITEMS'} ({sizeFormatted})
             </Text>{' '}
-            to your system&apos;s Recently Deleted album.
+            from local device storage. Items will transfer to system Recently Deleted album.
           </Text>
 
           {/* System Safety Callout */}
           <View style={styles.safetyCallout}>
-            <Text style={styles.safetyIcon}>🛡️</Text>
             <Text style={styles.safetyText}>
-              Your native OS will prompt you to confirm before any permanent changes
-              are made.
+              // NATIVE OS WILL PROMPT A SYSTEM CONFIRMATION DIALOG BEFORE REMOVAL.
             </Text>
           </View>
 
@@ -72,12 +70,12 @@ export const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
             >
               {isDeleting ? (
                 <View style={styles.deletingRow}>
-                  <ActivityIndicator size="small" color="#FFFFFF" />
-                  <Text style={styles.deleteButtonText}>Requesting OS...</Text>
+                  <ActivityIndicator size="small" color="#FF3333" />
+                  <Text style={styles.deleteButtonText}>[ REQUESTING_OS... ]</Text>
                 </View>
               ) : (
                 <Text style={styles.deleteButtonText}>
-                  Delete All {itemCount} {itemCount === 1 ? 'Item' : 'Items'}
+                  [ EXECUTE PURGE // {itemCount} {itemCount === 1 ? 'ITEM' : 'ITEMS'} ]
                 </Text>
               )}
             </TouchableOpacity>
@@ -89,7 +87,7 @@ export const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
               disabled={isDeleting}
               activeOpacity={0.7}
             >
-              <Text style={styles.cancelButtonText}>Cancel / Keep Swiping</Text>
+              <Text style={styles.cancelButtonText}>[ ABORT // KEEP SWIPING ]</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -101,96 +99,91 @@ export const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.78)',
+    backgroundColor: 'rgba(0, 0, 0, 0.88)',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: 20,
   },
   modalCard: {
     width: '100%',
     maxWidth: 380,
-    backgroundColor: '#1E293B',
-    borderRadius: 24,
-    paddingHorizontal: 24,
-    paddingTop: 28,
-    paddingBottom: 24,
+    backgroundColor: '#0A0A0A',
+    borderRadius: 4,
+    paddingHorizontal: 20,
+    paddingTop: 24,
+    paddingBottom: 20,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#334155',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.5,
-    shadowRadius: 20,
-    elevation: 10,
+    borderWidth: 2,
+    borderColor: '#FF3333',
   },
   iconCircle: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
-    backgroundColor: 'rgba(239, 68, 68, 0.15)',
-    borderWidth: 2,
-    borderColor: '#EF4444',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 2,
+    backgroundColor: '#000000',
+    borderWidth: 1.5,
+    borderColor: '#FF3333',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: 14,
   },
   iconText: {
-    fontSize: 32,
+    fontSize: 14,
+    color: '#FF3333',
+    fontWeight: '900',
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   title: {
-    color: '#F8FAFC',
-    fontSize: 22,
-    fontWeight: '800',
-    marginBottom: 12,
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '900',
+    marginBottom: 10,
     textAlign: 'center',
+    letterSpacing: 1.2,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   body: {
-    color: '#94A3B8',
-    fontSize: 14,
-    lineHeight: 22,
+    color: '#8E8E8E',
+    fontSize: 12,
+    lineHeight: 18,
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: 14,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   highlightText: {
-    color: '#F1F5F9',
-    fontWeight: '700',
+    color: '#FFFFFF',
+    fontWeight: '900',
   },
   safetyCallout: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(15, 23, 42, 0.6)',
+    backgroundColor: '#000000',
     paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 12,
+    paddingVertical: 8,
+    borderRadius: 2,
     borderWidth: 1,
-    borderColor: '#334155',
-    marginBottom: 20,
-    gap: 8,
-  },
-  safetyIcon: {
-    fontSize: 16,
+    borderColor: '#262626',
+    marginBottom: 18,
+    width: '100%',
   },
   safetyText: {
-    flex: 1,
-    color: '#64748B',
-    fontSize: 12,
-    lineHeight: 16,
+    color: '#555555',
+    fontSize: 10,
+    lineHeight: 14,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   actions: {
     width: '100%',
-    gap: 10,
+    gap: 8,
   },
   deleteButton: {
-    backgroundColor: '#EF4444',
-    paddingVertical: 15,
-    borderRadius: 14,
+    backgroundColor: '#000000',
+    paddingVertical: 13,
+    borderRadius: 2,
+    borderWidth: 2,
+    borderColor: '#FF3333',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#EF4444',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
   },
   deletingRow: {
     flexDirection: 'row',
@@ -198,24 +191,28 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   deleteButtonText: {
-    color: '#FFFFFF',
-    fontSize: 15,
-    fontWeight: '700',
+    color: '#FF3333',
+    fontSize: 12,
+    fontWeight: '900',
+    letterSpacing: 1,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   cancelButton: {
-    backgroundColor: 'transparent',
-    paddingVertical: 13,
-    borderRadius: 14,
+    backgroundColor: '#000000',
+    paddingVertical: 12,
+    borderRadius: 2,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#475569',
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
   },
   cancelButtonText: {
-    color: '#94A3B8',
-    fontSize: 14,
-    fontWeight: '600',
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   disabledButton: {
-    opacity: 0.5,
+    opacity: 0.35,
   },
 });

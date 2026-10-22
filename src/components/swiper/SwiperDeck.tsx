@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Alert,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -528,49 +529,48 @@ export const SwiperDeck: React.FC<SwiperDeckProps> = ({
         {isGalleryEmpty ? (
           // Edge Case: Empty gallery / zero media on device
           <View style={[styles.emptyContainer, { width: cardWidth, height: cardHeight }]}>
-            <Text style={styles.emptyEmoji}>📷</Text>
-            <Text style={styles.emptyTitle}>No Media Found</Text>
+            <Text style={styles.emptyTitle}>[ NO_MEDIA_FOUND ]</Text>
             <Text style={styles.emptySubtitle}>
-              Your camera roll does not contain any photos or videos to clean.
+              Camera roll scan returned 0 items.
             </Text>
             <TouchableOpacity
               style={styles.returnHomeButton}
               onPress={onReturnHome}
               activeOpacity={0.7}
             >
-              <Text style={styles.returnHomeButtonText}>Return to Home</Text>
+              <Text style={styles.returnHomeButtonText}>[ RETURN TO TERMINAL ]</Text>
             </TouchableOpacity>
           </View>
         ) : isDeckComplete ? (
           // Deck Completion State
           <View style={[styles.completionCard, { width: cardWidth, height: cardHeight }]}>
             <View style={styles.completionEmojiCircle}>
-              <Text style={styles.completionEmoji}>🎉</Text>
+              <Text style={styles.completionEmoji}>✓</Text>
             </View>
 
-            <Text style={styles.completionTitle}>All Caught Up!</Text>
+            <Text style={styles.completionTitle}>[ QUEUE EXHAUSTED ]</Text>
             <Text style={styles.completionSubtitle}>
-              You have reviewed all available media in your camera roll.
+              All indexed media items in this batch have been sorted.
             </Text>
 
             {/* Session Summary Card */}
             <View style={styles.summaryBox}>
-              <Text style={styles.summaryTitle}>SESSION SUMMARY</Text>
+              <Text style={styles.summaryTitle}>// SESSION TELEMETRY</Text>
 
               <View style={styles.summaryRow}>
-                <Text style={styles.summaryLabel}>Reviewed:</Text>
-                <Text style={styles.summaryValue}>{reviewedCount} items</Text>
+                <Text style={styles.summaryLabel}>REVIEWED:</Text>
+                <Text style={styles.summaryValue}>{reviewedCount} ITEMS</Text>
               </View>
 
               <View style={styles.summaryRow}>
-                <Text style={styles.summaryLabel}>Kept:</Text>
-                <Text style={[styles.summaryValue, styles.keptGreen]}>{keptCount} items</Text>
+                <Text style={styles.summaryLabel}>KEPT:</Text>
+                <Text style={[styles.summaryValue, styles.keptGreen]}>{keptCount} ITEMS</Text>
               </View>
 
               <View style={styles.summaryRow}>
-                <Text style={styles.summaryLabel}>Marked for Deletion:</Text>
+                <Text style={styles.summaryLabel}>STAGED FOR PURGE:</Text>
                 <Text style={[styles.summaryValue, styles.trashRed]}>
-                  {pendingDeleteQueue.length} items ({reclaimableSizeFormatted})
+                  {pendingDeleteQueue.length} ITEMS // {reclaimableSizeFormatted}
                 </Text>
               </View>
             </View>
@@ -587,7 +587,7 @@ export const SwiperDeck: React.FC<SwiperDeckProps> = ({
                   activeOpacity={0.8}
                 >
                   <Text style={styles.completionDeleteButtonText}>
-                    🗑️ Delete All {pendingDeleteQueue.length} Staged Items
+                    [ PURGE ALL {pendingDeleteQueue.length} STAGED ITEMS ]
                   </Text>
                 </TouchableOpacity>
               )}
@@ -597,17 +597,16 @@ export const SwiperDeck: React.FC<SwiperDeckProps> = ({
                 onPress={onReturnHome}
                 activeOpacity={0.7}
               >
-                <Text style={styles.returnHomeButtonText}>Return to Home</Text>
+                <Text style={styles.returnHomeButtonText}>[ RETURN TO TERMINAL ]</Text>
               </TouchableOpacity>
             </View>
           </View>
         ) : queue.length === 0 ? (
           // Streaming next batch
           <View style={[styles.emptyContainer, { width: cardWidth, height: cardHeight }]}>
-            <Text style={styles.emptyEmoji}>📦</Text>
-            <Text style={styles.emptyTitle}>Streaming Media...</Text>
+            <Text style={styles.emptyTitle}>[ SCANNING_MEDIA ]</Text>
             <Text style={styles.emptySubtitle}>
-              Loading next batch from your camera roll.
+              Reading next block from device storage...
             </Text>
           </View>
         ) : (
@@ -703,7 +702,7 @@ export const SwiperDeck: React.FC<SwiperDeckProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#000000',
     justifyContent: 'space-between',
   },
   deckStage: {
@@ -713,84 +712,91 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   emptyContainer: {
-    backgroundColor: '#1E293B',
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: '#334155',
+    backgroundColor: '#0A0A0A',
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: '#262626',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 24,
-  },
-  emptyEmoji: {
-    fontSize: 48,
-    marginBottom: 16,
-  },
-  emptyTitle: {
-    color: '#F8FAFC',
-    fontSize: 20,
-    fontWeight: '800',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  emptySubtitle: {
-    color: '#94A3B8',
-    fontSize: 14,
-    textAlign: 'center',
-    lineHeight: 20,
-    marginBottom: 16,
-  },
-  completionCard: {
-    backgroundColor: '#1E293B',
-    borderRadius: 24,
-    borderWidth: 1.5,
-    borderColor: '#10B981',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 24,
   },
-  completionEmojiCircle: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: 'rgba(16, 185, 129, 0.15)',
-    borderWidth: 2,
-    borderColor: '#10B981',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 8,
-  },
-  completionEmoji: {
-    fontSize: 32,
-  },
-  completionTitle: {
-    color: '#F8FAFC',
-    fontSize: 22,
+  emptyTitle: {
+    color: '#FFFFFF',
+    fontSize: 16,
     fontWeight: '800',
     textAlign: 'center',
+    marginBottom: 8,
+    letterSpacing: 1.2,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
-  completionSubtitle: {
-    color: '#94A3B8',
-    fontSize: 13,
+  emptySubtitle: {
+    color: '#666666',
+    fontSize: 12,
     textAlign: 'center',
     lineHeight: 18,
-    paddingHorizontal: 10,
+    marginBottom: 18,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+  },
+  completionCard: {
+    backgroundColor: '#0A0A0A',
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: '#333333',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 18,
+    paddingVertical: 20,
+  },
+  completionEmojiCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 2,
+    backgroundColor: '#000000',
+    borderWidth: 2,
+    borderColor: '#00FF66',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 4,
+  },
+  completionEmoji: {
+    fontSize: 22,
+    color: '#00FF66',
+    fontWeight: '900',
+  },
+  completionTitle: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '900',
+    textAlign: 'center',
+    letterSpacing: 1.5,
+    marginTop: 8,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+  },
+  completionSubtitle: {
+    color: '#777777',
+    fontSize: 11,
+    textAlign: 'center',
+    lineHeight: 16,
+    paddingHorizontal: 8,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   summaryBox: {
     width: '100%',
-    backgroundColor: '#0F172A',
-    borderRadius: 16,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: '#334155',
+    backgroundColor: '#000000',
+    borderRadius: 3,
+    padding: 12,
+    borderWidth: 1.5,
+    borderColor: '#222222',
     gap: 8,
   },
   summaryTitle: {
-    color: '#64748B',
-    fontSize: 10,
-    fontWeight: '800',
-    letterSpacing: 0.8,
+    color: '#8E8E8E',
+    fontSize: 9,
+    fontWeight: '900',
+    letterSpacing: 1,
     marginBottom: 2,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   summaryRow: {
     flexDirection: 'row',
@@ -798,54 +804,60 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   summaryLabel: {
-    color: '#94A3B8',
-    fontSize: 13,
+    color: '#666666',
+    fontSize: 11,
+    fontWeight: '700',
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   summaryValue: {
-    color: '#F8FAFC',
-    fontSize: 13,
-    fontWeight: '700',
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '800',
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   keptGreen: {
-    color: '#34D399',
+    color: '#00FF66',
   },
   trashRed: {
-    color: '#F87171',
+    color: '#FF3333',
   },
   completionActions: {
     width: '100%',
-    gap: 10,
-    marginBottom: 8,
+    gap: 8,
+    marginBottom: 4,
   },
   completionDeleteButton: {
-    backgroundColor: '#EF4444',
-    paddingVertical: 13,
-    borderRadius: 12,
+    backgroundColor: '#000000',
+    paddingVertical: 12,
+    borderRadius: 3,
+    borderWidth: 2,
+    borderColor: '#FF3333',
     alignItems: 'center',
-    shadowColor: '#EF4444',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
   },
   completionDeleteButtonText: {
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '800',
+    color: '#FF3333',
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 1,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   returnHomeButton: {
-    backgroundColor: '#334155',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 12,
+    backgroundColor: '#000000',
+    paddingVertical: 11,
+    paddingHorizontal: 16,
+    borderRadius: 3,
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
     alignItems: 'center',
   },
   returnHomeButtonText: {
-    color: '#F1F5F9',
-    fontSize: 13,
-    fontWeight: '700',
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 1,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   bottomPlaceholder: {
-    height: 80,
+    height: 70,
   },
 });

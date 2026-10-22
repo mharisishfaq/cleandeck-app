@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   Alert,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -137,10 +138,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       ]}
       showsVerticalScrollIndicator={false}
     >
-      {/* 1. Header */}
+      {/* 1. Terminal Header */}
       <View style={styles.header}>
         <View style={styles.headerTitleRow}>
-          <Text style={styles.appName}>CleanDeck</Text>
+          <View>
+            <Text style={styles.appName}>CLEANDECK</Text>
+            <Text style={styles.headerVersion}>// RECLAMATION TERMINAL</Text>
+          </View>
           <View style={styles.headerRightBadges}>
             {onToggleMockMode && (
               <TouchableOpacity
@@ -149,12 +153,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 activeOpacity={0.7}
               >
                 <Text style={[styles.demoToggleText, isMockMode && styles.demoToggleTextActive]}>
-                  {isMockMode ? '🧪 DEMO' : '📱 GALLERY'}
+                  {isMockMode ? '[DEMO]' : '[LIVE]'}
                 </Text>
               </TouchableOpacity>
             )}
             <View style={styles.proBadge}>
-              <Text style={styles.proBadgeText}>⚡ 9:16 DECK</Text>
+              <Text style={styles.proBadgeText}>[9:16 DECK]</Text>
             </View>
             {onOpenOnboarding && (
               <TouchableOpacity
@@ -169,7 +173,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </View>
         </View>
         <Text style={styles.headerSubtitle}>
-          Gamified camera roll decluttering & storage recovery
+          Physical gesture triage & camera roll storage recovery
         </Text>
       </View>
 
@@ -177,9 +181,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       {isLimitedAccess && (
         <View style={styles.limitedBanner}>
           <View style={styles.limitedTextContainer}>
-            <Text style={styles.limitedBannerTitle}>⚠️ Limited Photo Access</Text>
+            <Text style={styles.limitedBannerTitle}>[ ACCESS: PARTIAL ]</Text>
             <Text style={styles.limitedBannerText}>
-              Limited Photo Access granted. The app can only see and clean the photos you selected.
+              Application restricted to selected media items only.
             </Text>
           </View>
           {onSelectMorePhotos && (
@@ -188,7 +192,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               onPress={onSelectMorePhotos}
               activeOpacity={0.8}
             >
-              <Text style={styles.selectMoreButtonText}>Select More Photos</Text>
+              <Text style={styles.selectMoreButtonText}>[ EXTEND ACCESS ]</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -201,30 +205,30 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           <View style={styles.pausedBadgeRow}>
             <View style={styles.pausedPill}>
               <View style={styles.orangePulseDot} />
-              <Text style={styles.pausedPillText}>SESSION PAUSED • {pausedDateString}</Text>
+              <Text style={styles.pausedPillText}>[ SESSION PAUSED // {pausedDateString} ]</Text>
             </View>
           </View>
 
-          <Text style={styles.pausedCardTitle}>Pick Up Where You Left Off</Text>
+          <Text style={styles.pausedCardTitle}>SAVED RUN DETECTED</Text>
           <Text style={styles.pausedCardDescription}>
-            Your review progress and staged deletions are safely preserved in local storage.
+            Queue state and staged items preserved in offline persistent storage.
           </Text>
 
           {/* Progress Indicators */}
           <View style={styles.statsGrid}>
             <View style={styles.statBox}>
               <Text style={styles.statBoxNumber}>{session.reviewedCount}</Text>
-              <Text style={styles.statBoxLabel}>Reviewed</Text>
+              <Text style={styles.statBoxLabel}>REVIEWED</Text>
             </View>
 
             <View style={styles.statBox}>
               <Text style={styles.statBoxNumber}>{session.keptCount}</Text>
-              <Text style={styles.statBoxLabel}>Kept</Text>
+              <Text style={styles.statBoxLabel}>KEPT</Text>
             </View>
 
             <View style={[styles.statBox, styles.statBoxTrash]}>
               <Text style={[styles.statBoxNumber, styles.trashText]}>{pendingCount}</Text>
-              <Text style={styles.statBoxLabel}>Marked Trash</Text>
+              <Text style={styles.statBoxLabel}>STAGED</Text>
             </View>
           </View>
 
@@ -236,8 +240,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               activeOpacity={0.7}
             >
               <Text style={styles.reclaimPillText}>
-                🗑️ Reclaimable: <Text style={styles.boldWhite}>{pendingFormattedSize}</Text> from{' '}
-                {pendingCount} {pendingCount === 1 ? 'item' : 'items'} • Tap to inspect
+                [ PURGE QUEUE: <Text style={styles.boldWhite}>{pendingFormattedSize}</Text> // {pendingCount} {pendingCount === 1 ? 'ITEM' : 'ITEMS'} • TAP TO INSPECT ]
               </Text>
             </TouchableOpacity>
           )}
@@ -250,7 +253,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               onPress={onResumeSession}
               activeOpacity={0.8}
             >
-              <Text style={styles.primaryButtonText}>▶ Resume Cleaning</Text>
+              <Text style={styles.primaryButtonText}>[ RESUME CLEANING RUN ]</Text>
             </TouchableOpacity>
 
             {/* Quick Action: Review & Delete Staged Items in Temporary Folder Grid */}
@@ -261,8 +264,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 activeOpacity={0.7}
               >
                 <Text style={styles.deleteStagedButtonText}>
-                  📂 Review & Delete {pendingCount} {pendingCount === 1 ? 'Item' : 'Items'} (
-                  {pendingFormattedSize})
+                  [ PURGE {pendingCount} STAGED // {pendingFormattedSize} ]
                 </Text>
               </TouchableOpacity>
             )}
@@ -273,7 +275,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               onPress={handleStartNewPress}
               activeOpacity={0.7}
             >
-              <Text style={styles.startNewButtonText}>↻ Start New Session</Text>
+              <Text style={styles.startNewButtonText}>[ DISCARD & START NEW ]</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -281,13 +283,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         // B) No Active Session Card
         <View style={styles.freshCard}>
           <View style={styles.iconCircle}>
-            <Text style={styles.heroEmoji}>🧹</Text>
+            <Text style={styles.heroEmoji}>//</Text>
           </View>
 
-          <Text style={styles.freshTitle}>Ready to clean your gallery?</Text>
+          <Text style={styles.freshTitle}>GALLERY READY FOR TRIAGE</Text>
           <Text style={styles.freshSubtitle}>
-            Swipe right to keep favorite memories, swipe left to stage duplicates and heavy clutter
-            for safe deletion.
+            SWIPE RIGHT: PRESERVE [KEEP] // SWIPE LEFT: STAGE FOR PURGE
           </Text>
 
           <TouchableOpacity
@@ -295,7 +296,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             onPress={onStartNewSession}
             activeOpacity={0.8}
           >
-            <Text style={styles.primaryButtonText}>✨ Start Cleaning Deck</Text>
+            <Text style={styles.primaryButtonText}>[ START CLEANING RUN ]</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -303,37 +304,34 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       {/* 3. Quick Storage Stats Card */}
       <View style={styles.statsCard}>
         <View style={styles.statsHeaderRow}>
-          <Text style={styles.statsCardTitle}>Gallery Overview</Text>
+          <Text style={styles.statsCardTitle}>STORAGE TELEMETRY</Text>
           <View style={styles.totalBadge}>
             <Text style={styles.totalBadgeText}>
-              {galleryStats ? `${galleryStats.totalCount.toLocaleString()} Total` : 'Scanning...'}
+              {galleryStats ? `[${galleryStats.totalCount.toLocaleString()} TOTAL]` : '[SCANNING...]'}
             </Text>
           </View>
         </View>
 
         <View style={styles.storageGrid}>
           <View style={styles.storageItem}>
-            <Text style={styles.storageIcon}>📷</Text>
+            <Text style={styles.storageLabel}>// PHOTOS</Text>
             <Text style={styles.storageValue}>
               {galleryStats ? galleryStats.photoCount.toLocaleString() : '—'}
             </Text>
-            <Text style={styles.storageLabel}>Photos</Text>
           </View>
 
           <View style={styles.storageItem}>
-            <Text style={styles.storageIcon}>🎥</Text>
+            <Text style={styles.storageLabel}>// VIDEOS</Text>
             <Text style={styles.storageValue}>
               {galleryStats ? galleryStats.videoCount.toLocaleString() : '—'}
             </Text>
-            <Text style={styles.storageLabel}>Videos</Text>
           </View>
 
           <View style={styles.storageItem}>
-            <Text style={styles.storageIcon}>💾</Text>
+            <Text style={styles.storageLabel}>// EST. SIZE</Text>
             <Text style={styles.storageValue}>
               {galleryStats ? galleryStats.formattedTotalSize : '—'}
             </Text>
-            <Text style={styles.storageLabel}>Est. Storage</Text>
           </View>
         </View>
       </View>
@@ -345,13 +343,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           onPress={onToggleMockMode}
           activeOpacity={0.8}
         >
-          <View style={styles.simulatorIconCircle}>
-            <Text style={styles.simulatorEmoji}>🧪</Text>
-          </View>
           <View style={styles.simulatorContent}>
-            <Text style={styles.simulatorTitle}>Simulator or Empty Gallery?</Text>
+            <Text style={styles.simulatorTitle}>[ SIMULATOR EMPTY GALLERY ]</Text>
             <Text style={styles.simulatorSubtitle}>
-              Tap to load 18 high-res sample photos & videos to test the 9:16 swiper deck!
+              Tap to mount 18 high-res mock samples to test swipe deck.
             </Text>
           </View>
         </TouchableOpacity>
@@ -389,13 +384,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#000000',
   },
   content: {
-    paddingHorizontal: 20,
-    paddingTop: 54,
-    paddingBottom: 40,
-    gap: 18,
+    paddingHorizontal: 16,
+    paddingTop: 48,
+    paddingBottom: 36,
+    gap: 14,
   },
   header: {
     marginBottom: 4,
@@ -406,390 +401,404 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   appName: {
-    color: '#F8FAFC',
-    fontSize: 30,
+    color: '#FFFFFF',
+    fontSize: 26,
     fontWeight: '900',
-    letterSpacing: -0.5,
+    letterSpacing: 1.5,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+  },
+  headerVersion: {
+    color: '#8E8E8E',
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 1.2,
+    marginTop: 2,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   headerRightBadges: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
   },
   demoTogglePill: {
-    backgroundColor: 'rgba(51, 65, 85, 0.6)',
-    paddingHorizontal: 10,
+    backgroundColor: '#0A0A0A',
+    paddingHorizontal: 8,
     paddingVertical: 5,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#475569',
+    borderRadius: 2,
+    borderWidth: 1.5,
+    borderColor: '#333333',
   },
   demoTogglePillActive: {
-    backgroundColor: 'rgba(99, 102, 241, 0.25)',
-    borderColor: '#6366F1',
+    backgroundColor: '#000000',
+    borderColor: '#D4FF00',
   },
   demoToggleText: {
-    color: '#94A3B8',
-    fontSize: 10,
-    fontWeight: '800',
-    letterSpacing: 0.5,
-  },
-  demoToggleTextActive: {
-    color: '#A5B4FC',
-  },
-  proBadge: {
-    backgroundColor: 'rgba(99, 102, 241, 0.15)',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#6366F1',
-  },
-  proBadgeText: {
-    color: '#818CF8',
+    color: '#666666',
     fontSize: 10,
     fontWeight: '800',
     letterSpacing: 0.8,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+  },
+  demoToggleTextActive: {
+    color: '#D4FF00',
+  },
+  proBadge: {
+    backgroundColor: '#0A0A0A',
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 2,
+    borderWidth: 1.5,
+    borderColor: '#333333',
+  },
+  proBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   infoButton: {
     width: 28,
     height: 28,
-    borderRadius: 14,
-    backgroundColor: '#1E293B',
-    borderWidth: 1,
-    borderColor: '#334155',
+    borderRadius: 2,
+    backgroundColor: '#0A0A0A',
+    borderWidth: 1.5,
+    borderColor: '#333333',
     alignItems: 'center',
     justifyContent: 'center',
   },
   infoButtonText: {
-    color: '#94A3B8',
-    fontSize: 13,
-    fontWeight: '800',
-  },
-  simulatorCard: {
-    backgroundColor: 'rgba(99, 102, 241, 0.12)',
-    borderRadius: 18,
-    padding: 16,
-    borderWidth: 1.5,
-    borderColor: '#6366F1',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-  },
-  simulatorIconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: 'rgba(99, 102, 241, 0.2)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  simulatorEmoji: {
-    fontSize: 22,
-  },
-  simulatorContent: {
-    flex: 1,
-  },
-  simulatorTitle: {
-    color: '#F8FAFC',
-    fontSize: 14,
-    fontWeight: '700',
-    marginBottom: 2,
-  },
-  simulatorSubtitle: {
-    color: '#A5B4FC',
+    color: '#FFFFFF',
     fontSize: 12,
-    lineHeight: 16,
+    fontWeight: '900',
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   headerSubtitle: {
-    color: '#94A3B8',
-    fontSize: 14,
-    marginTop: 4,
+    color: '#777777',
+    fontSize: 12,
+    marginTop: 6,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   pausedCard: {
-    backgroundColor: '#1E293B',
-    borderRadius: 24,
-    padding: 20,
-    borderWidth: 1.5,
-    borderColor: '#F59E0B',
-    shadowColor: '#F59E0B',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.15,
-    shadowRadius: 14,
-    elevation: 4,
+    backgroundColor: '#0A0A0A',
+    borderRadius: 4,
+    padding: 16,
+    borderWidth: 2,
+    borderColor: '#D4FF00',
   },
   pausedBadgeRow: {
     flexDirection: 'row',
-    marginBottom: 12,
+    marginBottom: 10,
   },
   pausedPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(245, 158, 11, 0.15)',
-    paddingHorizontal: 10,
+    backgroundColor: '#000000',
+    paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 10,
+    borderRadius: 2,
+    borderWidth: 1,
+    borderColor: '#D4FF00',
     gap: 6,
   },
   orangePulseDot: {
     width: 6,
     height: 6,
-    borderRadius: 3,
-    backgroundColor: '#F59E0B',
+    borderRadius: 1,
+    backgroundColor: '#D4FF00',
   },
   pausedPillText: {
-    color: '#FBBF24',
-    fontSize: 11,
+    color: '#D4FF00',
+    fontSize: 10,
     fontWeight: '800',
-    letterSpacing: 0.5,
+    letterSpacing: 0.8,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   pausedCardTitle: {
-    color: '#F8FAFC',
-    fontSize: 20,
-    fontWeight: '800',
-    marginBottom: 6,
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '900',
+    letterSpacing: 1,
+    marginBottom: 4,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   pausedCardDescription: {
-    color: '#94A3B8',
-    fontSize: 13,
-    lineHeight: 18,
-    marginBottom: 16,
+    color: '#777777',
+    fontSize: 12,
+    lineHeight: 16,
+    marginBottom: 14,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   statsGrid: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 6,
     marginBottom: 12,
   },
   statBox: {
     flex: 1,
-    backgroundColor: '#0F172A',
-    borderRadius: 14,
+    backgroundColor: '#000000',
+    borderRadius: 2,
     paddingVertical: 10,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#334155',
+    borderWidth: 1.5,
+    borderColor: '#222222',
   },
   statBoxTrash: {
-    borderColor: 'rgba(239, 68, 68, 0.3)',
-    backgroundColor: 'rgba(239, 68, 68, 0.08)',
+    borderColor: '#FF3333',
   },
   statBoxNumber: {
-    color: '#F8FAFC',
-    fontSize: 18,
-    fontWeight: '800',
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '900',
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   trashText: {
-    color: '#F87171',
+    color: '#FF3333',
   },
   statBoxLabel: {
-    color: '#64748B',
-    fontSize: 10,
-    fontWeight: '600',
+    color: '#666666',
+    fontSize: 9,
+    fontWeight: '700',
     marginTop: 2,
-    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   reclaimPill: {
-    backgroundColor: 'rgba(239, 68, 68, 0.12)',
+    backgroundColor: '#000000',
     paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: 'rgba(239, 68, 68, 0.25)',
-    marginBottom: 16,
+    paddingHorizontal: 10,
+    borderRadius: 2,
+    borderWidth: 1.5,
+    borderColor: '#FF3333',
+    marginBottom: 14,
     alignItems: 'center',
   },
   reclaimPillText: {
-    color: '#FCA5A5',
-    fontSize: 12,
-    fontWeight: '600',
+    color: '#FF3333',
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   boldWhite: {
     color: '#FFFFFF',
-    fontWeight: '800',
+    fontWeight: '900',
   },
   actionColumn: {
-    gap: 10,
+    gap: 8,
   },
   primaryButton: {
-    backgroundColor: '#10B981',
-    borderRadius: 14,
-    paddingVertical: 15,
+    backgroundColor: '#D4FF00',
+    borderRadius: 3,
+    paddingVertical: 14,
     alignItems: 'center',
-    shadowColor: '#10B981',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
+    borderWidth: 2,
+    borderColor: '#D4FF00',
   },
   primaryButtonText: {
-    color: '#0F172A',
-    fontSize: 15,
-    fontWeight: '800',
-    letterSpacing: 0.3,
+    color: '#000000',
+    fontSize: 13,
+    fontWeight: '900',
+    letterSpacing: 1,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   deleteStagedButton: {
-    backgroundColor: 'rgba(239, 68, 68, 0.15)',
-    borderRadius: 14,
+    backgroundColor: '#000000',
+    borderRadius: 3,
     paddingVertical: 12,
     alignItems: 'center',
     borderWidth: 1.5,
-    borderColor: '#EF4444',
+    borderColor: '#FF3333',
   },
   deleteStagedButtonText: {
-    color: '#EF4444',
-    fontSize: 13,
-    fontWeight: '700',
+    color: '#FF3333',
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   startNewButton: {
-    backgroundColor: 'transparent',
-    borderRadius: 14,
-    paddingVertical: 12,
+    backgroundColor: '#000000',
+    borderRadius: 3,
+    paddingVertical: 11,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#475569',
+    borderWidth: 1.5,
+    borderColor: '#333333',
   },
   startNewButtonText: {
-    color: '#94A3B8',
-    fontSize: 13,
-    fontWeight: '600',
+    color: '#8E8E8E',
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   freshCard: {
-    backgroundColor: '#1E293B',
-    borderRadius: 24,
-    padding: 24,
+    backgroundColor: '#0A0A0A',
+    borderRadius: 4,
+    padding: 20,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#334155',
+    borderWidth: 2,
+    borderColor: '#262626',
   },
   iconCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: 'rgba(16, 185, 129, 0.12)',
+    width: 52,
+    height: 52,
+    borderRadius: 2,
+    backgroundColor: '#000000',
     borderWidth: 2,
-    borderColor: '#10B981',
+    borderColor: '#D4FF00',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: 14,
   },
   heroEmoji: {
-    fontSize: 38,
+    fontSize: 20,
+    color: '#D4FF00',
+    fontWeight: '900',
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   freshTitle: {
-    color: '#F8FAFC',
-    fontSize: 22,
-    fontWeight: '800',
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '900',
     textAlign: 'center',
-    marginBottom: 8,
+    letterSpacing: 1.2,
+    marginBottom: 6,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   freshSubtitle: {
-    color: '#94A3B8',
-    fontSize: 14,
-    lineHeight: 20,
+    color: '#777777',
+    fontSize: 11,
+    lineHeight: 16,
     textAlign: 'center',
-    marginBottom: 20,
-    paddingHorizontal: 8,
+    marginBottom: 18,
+    letterSpacing: 0.5,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   statsCard: {
-    backgroundColor: '#1E293B',
-    borderRadius: 24,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: '#334155',
+    backgroundColor: '#0A0A0A',
+    borderRadius: 4,
+    padding: 16,
+    borderWidth: 2,
+    borderColor: '#262626',
   },
   statsHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   statsCardTitle: {
-    color: '#F1F5F9',
-    fontSize: 16,
-    fontWeight: '700',
+    color: '#8E8E8E',
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 1.2,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   totalBadge: {
-    backgroundColor: '#334155',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
+    backgroundColor: '#000000',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 2,
+    borderWidth: 1.5,
+    borderColor: '#333333',
   },
   totalBadgeText: {
-    color: '#94A3B8',
-    fontSize: 11,
-    fontWeight: '600',
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '800',
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   storageGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 8,
+    gap: 6,
   },
   storageItem: {
     flex: 1,
-    backgroundColor: '#0F172A',
-    borderRadius: 14,
-    paddingVertical: 12,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#334155',
-  },
-  storageIcon: {
-    fontSize: 18,
-    marginBottom: 4,
+    backgroundColor: '#000000',
+    borderRadius: 2,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    borderWidth: 1.5,
+    borderColor: '#1E1E1E',
   },
   storageValue: {
-    color: '#F8FAFC',
-    fontSize: 15,
-    fontWeight: '800',
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '900',
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   storageLabel: {
-    color: '#64748B',
-    fontSize: 10,
-    fontWeight: '600',
-    marginTop: 2,
-    textTransform: 'uppercase',
+    color: '#666666',
+    fontSize: 9,
+    fontWeight: '800',
+    marginBottom: 4,
+    letterSpacing: 0.8,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   limitedBanner: {
-    backgroundColor: 'rgba(245, 158, 11, 0.12)',
-    borderRadius: 18,
-    padding: 16,
-    borderWidth: 1.5,
-    borderColor: 'rgba(245, 158, 11, 0.35)',
-    gap: 12,
+    backgroundColor: '#0A0A0A',
+    borderRadius: 4,
+    padding: 14,
+    borderWidth: 2,
+    borderColor: '#D4FF00',
+    gap: 10,
   },
   limitedTextContainer: {
-    gap: 4,
+    gap: 2,
   },
   limitedBannerTitle: {
-    color: '#FBBF24',
-    fontSize: 14,
-    fontWeight: '800',
-    letterSpacing: 0.3,
+    color: '#D4FF00',
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 1,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   limitedBannerText: {
-    color: '#FDE68A',
-    fontSize: 13,
-    lineHeight: 18,
-    fontWeight: '500',
+    color: '#8E8E8E',
+    fontSize: 11,
+    lineHeight: 16,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   selectMoreButton: {
-    backgroundColor: '#F59E0B',
-    borderRadius: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    alignItems: 'center',
+    backgroundColor: '#000000',
+    borderRadius: 2,
+    borderWidth: 1.5,
+    borderColor: '#D4FF00',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
     alignSelf: 'flex-start',
-    shadowColor: '#F59E0B',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 3,
   },
   selectMoreButtonText: {
-    color: '#0F172A',
-    fontSize: 13,
-    fontWeight: '800',
-    letterSpacing: 0.2,
+    color: '#D4FF00',
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 0.8,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+  },
+  simulatorCard: {
+    backgroundColor: '#0A0A0A',
+    borderRadius: 4,
+    padding: 14,
+    borderWidth: 1.5,
+    borderColor: '#333333',
+  },
+  simulatorContent: {
+    gap: 4,
+  },
+  simulatorTitle: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '900',
+    letterSpacing: 1,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+  },
+  simulatorSubtitle: {
+    color: '#777777',
+    fontSize: 11,
+    lineHeight: 15,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
 });
 

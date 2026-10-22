@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { hapticFeedback } from '../../services/hapticsService';
 
@@ -35,21 +35,21 @@ const BottomControlsInner: React.FC<BottomControlsProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* 1. Left Trash Button */}
+      {/* 1. Left Purge Button */}
       <TouchableOpacity
-        style={[styles.button, styles.trashButton, disabled && styles.disabledButton]}
+        style={[styles.actionButton, styles.purgeButton, disabled && styles.disabledButton]}
         onPress={handleTrash}
         disabled={disabled}
         activeOpacity={0.7}
       >
-        <Text style={styles.trashIcon}>✕</Text>
-        <Text style={styles.trashLabel}>Trash</Text>
+        <Text style={styles.purgeIcon}>✕</Text>
+        <Text style={styles.purgeLabel}>PURGE</Text>
       </TouchableOpacity>
 
       {/* 2. Center Undo Button */}
       <TouchableOpacity
         style={[
-          styles.button,
+          styles.actionButton,
           styles.undoButton,
           (!canUndo || disabled) && styles.disabledButton,
         ]}
@@ -58,18 +58,18 @@ const BottomControlsInner: React.FC<BottomControlsProps> = ({
         activeOpacity={0.7}
       >
         <Text style={styles.undoIcon}>↺</Text>
-        <Text style={styles.undoLabel}>Undo</Text>
+        <Text style={styles.undoLabel}>UNDO</Text>
       </TouchableOpacity>
 
       {/* 3. Right Keep Button */}
       <TouchableOpacity
-        style={[styles.button, styles.keepButton, disabled && styles.disabledButton]}
+        style={[styles.actionButton, styles.keepButton, disabled && styles.disabledButton]}
         onPress={handleKeep}
         disabled={disabled}
         activeOpacity={0.7}
       >
         <Text style={styles.keepIcon}>✓</Text>
-        <Text style={styles.keepLabel}>Keep</Text>
+        <Text style={styles.keepLabel}>KEEP</Text>
       </TouchableOpacity>
     </View>
   );
@@ -82,85 +82,76 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 14,
-    gap: 20,
+    paddingVertical: 12,
+    gap: 14,
   },
-  button: {
+  actionButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 36,
+    borderRadius: 4,
+    backgroundColor: '#000000',
+    borderWidth: 2,
   },
   disabledButton: {
-    opacity: 0.35,
+    opacity: 0.25,
   },
-  trashButton: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
-    backgroundColor: '#1E293B',
-    borderWidth: 2,
-    borderColor: '#EF4444',
-    shadowColor: '#EF4444',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 4,
+  purgeButton: {
+    minWidth: 92,
+    height: 58,
+    borderColor: '#FF3333',
+    paddingHorizontal: 16,
   },
-  trashIcon: {
-    color: '#EF4444',
-    fontSize: 24,
+  purgeIcon: {
+    color: '#FF3333',
+    fontSize: 18,
     fontWeight: '900',
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
-  trashLabel: {
-    color: '#F87171',
+  purgeLabel: {
+    color: '#FF3333',
     fontSize: 10,
-    fontWeight: '700',
+    fontWeight: '900',
+    letterSpacing: 1.5,
     marginTop: 2,
-    textTransform: 'uppercase',
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   undoButton: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    backgroundColor: '#1E293B',
-    borderWidth: 1.5,
-    borderColor: '#64748B',
+    minWidth: 74,
+    height: 52,
+    borderColor: '#555555',
+    paddingHorizontal: 12,
   },
   undoIcon: {
-    color: '#94A3B8',
-    fontSize: 20,
-    fontWeight: '800',
-  },
-  undoLabel: {
-    color: '#64748B',
-    fontSize: 9,
-    fontWeight: '700',
-    marginTop: 1,
-    textTransform: 'uppercase',
-  },
-  keepButton: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
-    backgroundColor: '#1E293B',
-    borderWidth: 2,
-    borderColor: '#10B981',
-    shadowColor: '#10B981',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  keepIcon: {
-    color: '#10B981',
-    fontSize: 24,
+    color: '#8E8E8E',
+    fontSize: 16,
     fontWeight: '900',
   },
-  keepLabel: {
-    color: '#34D399',
-    fontSize: 10,
-    fontWeight: '700',
+  undoLabel: {
+    color: '#8E8E8E',
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 1,
     marginTop: 2,
-    textTransform: 'uppercase',
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+  },
+  keepButton: {
+    minWidth: 92,
+    height: 58,
+    borderColor: '#00FF66',
+    paddingHorizontal: 16,
+  },
+  keepIcon: {
+    color: '#00FF66',
+    fontSize: 18,
+    fontWeight: '900',
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+  },
+  keepLabel: {
+    color: '#00FF66',
+    fontSize: 10,
+    fontWeight: '900',
+    letterSpacing: 1.5,
+    marginTop: 2,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
 });

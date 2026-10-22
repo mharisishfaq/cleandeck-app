@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { BRUTALIST } from '../theme/brutalist';
 import type { MediaAsset, SortDirection } from '../types/media';
 
 interface MediaBatchOverviewProps {
@@ -50,7 +51,7 @@ export const MediaBatchOverview: React.FC<MediaBatchOverviewProps> = ({
           />
           <View style={styles.typeTag}>
             <Text style={styles.typeTagText}>
-              {isVideo ? `🎥 ${item.formattedDuration}` : '📷 PHOTO'}
+              {isVideo ? `[VID // ${item.formattedDuration}]` : '[IMG]'}
             </Text>
           </View>
         </View>
@@ -66,7 +67,7 @@ export const MediaBatchOverview: React.FC<MediaBatchOverviewProps> = ({
             onPress={() => onDeleteAsset(item.id)}
             activeOpacity={0.7}
           >
-            <Text style={styles.deleteButtonText}>🗑️ Test Delete</Text>
+            <Text style={styles.deleteButtonText}>[ ✕ TEST PURGE ]</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -75,37 +76,34 @@ export const MediaBatchOverview: React.FC<MediaBatchOverviewProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Gamified Status Header */}
+      {/* Brutalist Header */}
       <View style={styles.header}>
-        <View>
-          <View style={styles.titleRow}>
-            <Text style={styles.title}>CleanUp Hub</Text>
-            <View style={styles.activePill}>
-              <View style={styles.greenDot} />
-              <Text style={styles.activePillText}>Ready</Text>
-            </View>
+        <View style={styles.titleRow}>
+          <Text style={styles.title}>MEDIA_BATCH_INDEX</Text>
+          <View style={styles.activePill}>
+            <Text style={styles.activePillText}>[ ONLINE ]</Text>
           </View>
-          <Text style={styles.headerSubtitle}>
-            Gamified Gallery Declutter Scaffolding
-          </Text>
         </View>
+        <Text style={styles.headerSubtitle}>
+          // CURSOR_PAGINATED_DIAGNOSTIC_HUB
+        </Text>
       </View>
 
-      {/* Stats Cards */}
+      {/* Brutalist Stats Row */}
       <View style={styles.statsRow}>
         <View style={styles.statCard}>
           <Text style={styles.statValue}>{totalCount.toLocaleString()}</Text>
-          <Text style={styles.statLabel}>Total Camera Roll</Text>
+          <Text style={styles.statLabel}>TOTAL ASSETS</Text>
         </View>
 
         <View style={styles.statCard}>
           <Text style={styles.statValue}>{assets.length}</Text>
-          <Text style={styles.statLabel}>Loaded in Memory</Text>
+          <Text style={styles.statLabel}>INDEXED</Text>
         </View>
 
         <View style={styles.statCard}>
-          <Text style={styles.statValue}>Batch #{batchNumber}</Text>
-          <Text style={styles.statLabel}>Size: {batchSize}/page</Text>
+          <Text style={styles.statValue}>#{batchNumber}</Text>
+          <Text style={styles.statLabel}>BATCH {batchSize}/PAGE</Text>
         </View>
       </View>
 
@@ -117,13 +115,13 @@ export const MediaBatchOverview: React.FC<MediaBatchOverviewProps> = ({
           activeOpacity={0.7}
         >
           <Text style={styles.sortToggleText}>
-            ⏱️ Sort: {sortDirection === 'desc' ? 'Newest First' : 'Oldest First'}
+            [ ORDER: {sortDirection === 'desc' ? 'NEWEST_FIRST' : 'OLDEST_FIRST'} ]
           </Text>
         </TouchableOpacity>
 
         <View style={styles.cursorTag}>
           <Text style={styles.cursorTagText} numberOfLines={1}>
-            Cursor: {cursor ? cursor.slice(-8) : 'End'}
+            CURSOR: {cursor ? cursor.slice(-8) : 'EOF'}
           </Text>
         </View>
       </View>
@@ -149,24 +147,23 @@ export const MediaBatchOverview: React.FC<MediaBatchOverviewProps> = ({
                 activeOpacity={0.8}
               >
                 {isLoadingNext ? (
-                  <ActivityIndicator size="small" color="#0F172A" />
+                  <ActivityIndicator size="small" color={BRUTALIST.colors.accentText} />
                 ) : (
                   <Text style={styles.loadMoreButtonText}>
-                    Load Next {batchSize} Assets (Cursor Paginated)
+                    [ FETCH NEXT {batchSize} ASSETS ]
                   </Text>
                 )}
               </TouchableOpacity>
             ) : (
               <View style={styles.endOfRollBanner}>
                 <Text style={styles.endOfRollText}>
-                  🎉 All camera roll assets reached or end of gallery!
+                  [ END_OF_GALLERY_REACHED ]
                 </Text>
               </View>
             )}
 
             <Text style={styles.memoryEfficiencyNote}>
-              ⚡ Cursor pagination ensures only lightweight batches are fetched
-              sequentially without memory bloat.
+              // ZERO_BLOAT: Memory-capped cursor pagination pipeline.
             </Text>
           </View>
         }
@@ -178,12 +175,12 @@ export const MediaBatchOverview: React.FC<MediaBatchOverviewProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
-    paddingTop: 50,
+    backgroundColor: BRUTALIST.colors.bg,
+    paddingTop: 54,
   },
   header: {
-    paddingHorizontal: 20,
-    marginBottom: 16,
+    paddingHorizontal: 16,
+    marginBottom: 14,
   },
   titleRow: {
     flexDirection: 'row',
@@ -191,35 +188,30 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   title: {
-    color: '#F8FAFC',
-    fontSize: 26,
-    fontWeight: '800',
+    color: BRUTALIST.colors.text,
+    fontSize: 20,
+    fontWeight: '900',
+    fontFamily: BRUTALIST.typography.mono,
+    letterSpacing: 0.5,
   },
   activePill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(16, 185, 129, 0.15)',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#10B981',
-  },
-  greenDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#10B981',
-    marginRight: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderWidth: BRUTALIST.borders.thin,
+    borderColor: BRUTALIST.colors.accent,
+    borderRadius: BRUTALIST.radii.xs,
+    backgroundColor: BRUTALIST.colors.surfaceRaised,
   },
   activePillText: {
-    color: '#10B981',
-    fontSize: 12,
-    fontWeight: '700',
+    color: BRUTALIST.colors.accent,
+    fontSize: 10,
+    fontWeight: '800',
+    fontFamily: BRUTALIST.typography.mono,
   },
   headerSubtitle: {
-    color: '#94A3B8',
-    fontSize: 14,
+    color: BRUTALIST.colors.textDim,
+    fontSize: 11,
+    fontFamily: BRUTALIST.typography.mono,
     marginTop: 4,
   },
   statsRow: {
@@ -230,22 +222,24 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: '#1E293B',
-    borderRadius: 14,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
+    backgroundColor: BRUTALIST.colors.surface,
+    borderRadius: BRUTALIST.radii.xs,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#334155',
+    borderWidth: BRUTALIST.borders.thin,
+    borderColor: BRUTALIST.colors.border,
   },
   statValue: {
-    color: '#38BDF8',
-    fontSize: 16,
-    fontWeight: '800',
+    color: BRUTALIST.colors.accent,
+    fontSize: 15,
+    fontWeight: '900',
+    fontFamily: BRUTALIST.typography.mono,
   },
   statLabel: {
-    color: '#94A3B8',
-    fontSize: 11,
+    color: BRUTALIST.colors.textMuted,
+    fontSize: 9,
+    fontFamily: BRUTALIST.typography.mono,
     marginTop: 2,
     textAlign: 'center',
   },
@@ -253,30 +247,35 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     marginBottom: 12,
   },
   sortToggle: {
-    backgroundColor: '#334155',
+    backgroundColor: BRUTALIST.colors.surfaceRaised,
     paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 8,
+    paddingHorizontal: 10,
+    borderRadius: BRUTALIST.radii.xs,
+    borderWidth: BRUTALIST.borders.thin,
+    borderColor: BRUTALIST.colors.border,
   },
   sortToggleText: {
-    color: '#F1F5F9',
-    fontSize: 12,
-    fontWeight: '600',
+    color: BRUTALIST.colors.text,
+    fontSize: 11,
+    fontFamily: BRUTALIST.typography.mono,
+    fontWeight: '700',
   },
   cursorTag: {
-    backgroundColor: 'rgba(99, 102, 241, 0.15)',
+    backgroundColor: BRUTALIST.colors.surface,
     paddingVertical: 4,
-    paddingHorizontal: 10,
-    borderRadius: 6,
+    paddingHorizontal: 8,
+    borderRadius: BRUTALIST.radii.xs,
+    borderWidth: BRUTALIST.borders.thin,
+    borderColor: BRUTALIST.colors.border,
   },
   cursorTagText: {
-    color: '#A5B4FC',
-    fontSize: 11,
-    fontFamily: 'monospace',
+    color: BRUTALIST.colors.textDim,
+    fontSize: 10,
+    fontFamily: BRUTALIST.typography.mono,
   },
   listContent: {
     paddingHorizontal: 16,
@@ -284,21 +283,21 @@ const styles = StyleSheet.create({
   },
   columnWrapper: {
     justifyContent: 'space-between',
-    marginBottom: 14,
+    marginBottom: 12,
   },
   card: {
     width: '48%',
-    backgroundColor: '#1E293B',
-    borderRadius: 14,
+    backgroundColor: BRUTALIST.colors.surface,
+    borderRadius: BRUTALIST.radii.xs,
     overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#334155',
+    borderWidth: BRUTALIST.borders.normal,
+    borderColor: BRUTALIST.colors.border,
   },
   thumbnailWrapper: {
     width: '100%',
-    height: 140,
+    height: 130,
     position: 'relative',
-    backgroundColor: '#0F172A',
+    backgroundColor: BRUTALIST.colors.bg,
   },
   thumbnail: {
     width: '100%',
@@ -308,80 +307,92 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 6,
     left: 6,
-    backgroundColor: 'rgba(15, 23, 42, 0.75)',
-    paddingHorizontal: 6,
-    paddingVertical: 3,
-    borderRadius: 6,
+    backgroundColor: BRUTALIST.colors.bg,
+    borderWidth: BRUTALIST.borders.thin,
+    borderColor: BRUTALIST.colors.border,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    borderRadius: BRUTALIST.radii.xs,
   },
   typeTagText: {
-    color: '#F8FAFC',
-    fontSize: 10,
-    fontWeight: '700',
+    color: BRUTALIST.colors.text,
+    fontSize: 9,
+    fontFamily: BRUTALIST.typography.mono,
+    fontWeight: '800',
   },
   cardInfo: {
-    padding: 10,
+    padding: 8,
   },
   cardDate: {
-    color: '#F1F5F9',
-    fontSize: 12,
-    fontWeight: '600',
+    color: BRUTALIST.colors.text,
+    fontSize: 11,
+    fontFamily: BRUTALIST.typography.mono,
+    fontWeight: '700',
   },
   cardDimensions: {
-    color: '#64748B',
-    fontSize: 10,
+    color: BRUTALIST.colors.textDim,
+    fontSize: 9,
+    fontFamily: BRUTALIST.typography.mono,
     marginTop: 2,
     marginBottom: 8,
   },
   deleteButton: {
-    backgroundColor: 'rgba(239, 68, 68, 0.15)',
-    borderWidth: 1,
-    borderColor: 'rgba(239, 68, 68, 0.4)',
-    borderRadius: 8,
+    backgroundColor: BRUTALIST.colors.dangerBg,
+    borderWidth: BRUTALIST.borders.thin,
+    borderColor: BRUTALIST.colors.danger,
+    borderRadius: BRUTALIST.radii.xs,
     paddingVertical: 5,
     alignItems: 'center',
   },
   deleteButtonText: {
-    color: '#F87171',
-    fontSize: 11,
-    fontWeight: '600',
+    color: BRUTALIST.colors.danger,
+    fontSize: 10,
+    fontFamily: BRUTALIST.typography.mono,
+    fontWeight: '800',
   },
   footerContainer: {
     marginTop: 16,
     alignItems: 'center',
   },
   loadMoreButton: {
-    backgroundColor: '#10B981',
+    backgroundColor: BRUTALIST.colors.accent,
     width: '100%',
     paddingVertical: 14,
-    borderRadius: 14,
+    borderRadius: BRUTALIST.radii.xs,
     alignItems: 'center',
     marginBottom: 10,
+    ...BRUTALIST.shadows.hardAccent,
   },
   loadMoreButtonDisabled: {
-    opacity: 0.6,
+    opacity: 0.5,
   },
   loadMoreButtonText: {
-    color: '#0F172A',
-    fontSize: 14,
-    fontWeight: '700',
+    color: BRUTALIST.colors.accentText,
+    fontSize: 12,
+    fontFamily: BRUTALIST.typography.mono,
+    fontWeight: '900',
+    letterSpacing: 0.5,
   },
   endOfRollBanner: {
-    backgroundColor: '#1E293B',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 10,
+    backgroundColor: BRUTALIST.colors.surface,
+    borderWidth: BRUTALIST.borders.thin,
+    borderColor: BRUTALIST.colors.border,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: BRUTALIST.radii.xs,
     marginBottom: 10,
   },
   endOfRollText: {
-    color: '#34D399',
-    fontSize: 13,
-    fontWeight: '600',
+    color: BRUTALIST.colors.accent,
+    fontSize: 11,
+    fontFamily: BRUTALIST.typography.mono,
+    fontWeight: '700',
   },
   memoryEfficiencyNote: {
-    color: '#64748B',
-    fontSize: 11,
+    color: BRUTALIST.colors.textMuted,
+    fontSize: 10,
+    fontFamily: BRUTALIST.typography.mono,
     textAlign: 'center',
-    paddingHorizontal: 20,
-    lineHeight: 16,
+    paddingHorizontal: 16,
   },
 });

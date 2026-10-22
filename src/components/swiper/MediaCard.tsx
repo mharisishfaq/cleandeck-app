@@ -174,42 +174,42 @@ const MediaCardInner: React.FC<MediaCardProps> = ({
         <View style={styles.topBadgeRow} pointerEvents="none">
           <View style={styles.typeBadge}>
             <Text style={styles.typeBadgeText}>
-              {isVideo ? `🎥 ${asset.formattedDuration || 'VIDEO'}` : '📷 PHOTO'}
+              {isVideo ? `[REC // ${asset.formattedDuration || 'VID'}]` : '[IMG // PHOTO]'}
             </Text>
           </View>
 
           <View style={styles.dateBadge}>
-            <Text style={styles.dateBadgeText}>{asset.formattedDate}</Text>
+            <Text style={styles.dateBadgeText}>[{asset.formattedDate.toUpperCase()}]</Text>
           </View>
         </View>
 
         {/* Zoomed Inspection Hint Pill */}
         {isZoomedInternal && (
           <View style={styles.zoomHintBadge} pointerEvents="none">
-            <Text style={styles.zoomHintText}>🔍 Zoomed • Double-tap to reset</Text>
+            <Text style={styles.zoomHintText}>[ ZOOM // DBL-TAP TO RESET ]</Text>
           </View>
         )}
 
         {/* Bottom Metadata Info */}
         <View style={styles.bottomMeta} pointerEvents="none">
           <Text style={styles.filenameText} numberOfLines={1}>
-            {asset.filename}
+            {asset.filename.toUpperCase()}
           </Text>
           <Text style={styles.dimensionsText}>
-            {asset.width} × {asset.height} • {asset.formattedSize}
+            {asset.width}×{asset.height} // {asset.formattedSize}
           </Text>
         </View>
 
         {/* SWIPE OVERLAYS */}
         {keepOverlayStyle && !isZoomedInternal && (
           <Animated.View style={[styles.overlayBadge, styles.keepBadge, keepOverlayStyle]}>
-            <Text style={styles.keepBadgeText}>KEEP ✓</Text>
+            <Text style={styles.keepBadgeText}>[ KEEP ]</Text>
           </Animated.View>
         )}
 
         {trashOverlayStyle && !isZoomedInternal && (
           <Animated.View style={[styles.overlayBadge, styles.trashBadge, trashOverlayStyle]}>
-            <Text style={styles.trashBadgeText}>TRASH 🗑️</Text>
+            <Text style={styles.trashBadgeText}>[ PURGE ]</Text>
           </Animated.View>
         )}
       </View>
@@ -220,20 +220,16 @@ const MediaCardInner: React.FC<MediaCardProps> = ({
 const styles = StyleSheet.create({
   cardContainer: {
     position: 'absolute',
-    borderRadius: 24,
+    borderRadius: 6,
     overflow: 'hidden',
-    backgroundColor: '#0D0D0D',
-    borderWidth: 1.5,
-    borderColor: '#262626',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.5,
-    shadowRadius: 16,
-    elevation: Platform.OS === 'android' ? 2 : 8,
+    backgroundColor: '#000000',
+    borderWidth: 2,
+    borderColor: '#333333',
+    elevation: Platform.OS === 'android' ? 2 : 4,
   },
   canvas: {
     flex: 1,
-    backgroundColor: '#0D0D0D',
+    backgroundColor: '#050505',
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
@@ -247,114 +243,127 @@ const styles = StyleSheet.create({
   media: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#0D0D0D',
+    backgroundColor: '#050505',
   },
   topBadgeRow: {
     position: 'absolute',
-    top: 14,
-    left: 14,
-    right: 14,
+    top: 12,
+    left: 12,
+    right: 12,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     zIndex: 10,
   },
   typeBadge: {
-    backgroundColor: 'rgba(15, 23, 42, 0.75)',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
+    backgroundColor: '#000000',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 2,
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
   },
   typeBadgeText: {
-    color: '#F8FAFC',
-    fontSize: 12,
-    fontWeight: '700',
-    letterSpacing: 0.5,
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 1,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   dateBadge: {
-    backgroundColor: 'rgba(15, 23, 42, 0.75)',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
+    backgroundColor: '#000000',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 2,
+    borderWidth: 1.5,
+    borderColor: '#444444',
   },
   dateBadgeText: {
-    color: '#94A3B8',
-    fontSize: 12,
-    fontWeight: '600',
+    color: '#8E8E8E',
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.8,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   zoomHintBadge: {
     position: 'absolute',
-    top: 60,
+    top: 54,
     alignSelf: 'center',
-    backgroundColor: 'rgba(15, 23, 42, 0.85)',
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#38BDF8',
+    backgroundColor: '#000000',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 2,
+    borderWidth: 1.5,
+    borderColor: '#D4FF00',
     zIndex: 20,
   },
   zoomHintText: {
-    color: '#38BDF8',
-    fontSize: 11,
-    fontWeight: '700',
+    color: '#D4FF00',
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 1,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   bottomMeta: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    backgroundColor: 'rgba(13, 13, 13, 0.75)',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.88)',
+    borderTopWidth: 1,
+    borderTopColor: '#222222',
     zIndex: 10,
   },
   filenameText: {
-    color: '#F1F5F9',
-    fontSize: 13,
-    fontWeight: '600',
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   dimensionsText: {
-    color: '#64748B',
-    fontSize: 11,
+    color: '#666666',
+    fontSize: 10,
+    fontWeight: '600',
     marginTop: 2,
+    letterSpacing: 0.5,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   overlayBadge: {
     position: 'absolute',
-    top: 60,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 14,
+    top: 50,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 2,
     borderWidth: 3,
+    backgroundColor: '#000000',
     zIndex: 30,
   },
   keepBadge: {
-    left: 20,
-    borderColor: '#10B981',
-    backgroundColor: 'rgba(16, 185, 129, 0.25)',
-    transform: [{ rotate: '-12deg' }],
+    left: 16,
+    borderColor: '#00FF66',
+    transform: [{ rotate: '-8deg' }],
   },
   keepBadgeText: {
-    color: '#34D399',
-    fontSize: 24,
+    color: '#00FF66',
+    fontSize: 22,
     fontWeight: '900',
-    letterSpacing: 1.5,
+    letterSpacing: 2,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   trashBadge: {
-    right: 20,
-    borderColor: '#EF4444',
-    backgroundColor: 'rgba(239, 68, 68, 0.25)',
-    transform: [{ rotate: '12deg' }],
+    right: 16,
+    borderColor: '#FF3333',
+    transform: [{ rotate: '8deg' }],
   },
   trashBadgeText: {
-    color: '#F87171',
-    fontSize: 24,
+    color: '#FF3333',
+    fontSize: 22,
     fontWeight: '900',
-    letterSpacing: 1.5,
+    letterSpacing: 2,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
 });
 

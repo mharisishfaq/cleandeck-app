@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Platform, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import Animated, {
   FadeInUp,
   FadeOutUp,
@@ -26,8 +26,8 @@ export const CelebrationToast: React.FC<CelebrationToastProps> = ({
 
   return (
     <Animated.View
-      entering={FadeInUp.duration(300)}
-      exiting={FadeOutUp.duration(250)}
+      entering={FadeInUp.duration(200)}
+      exiting={FadeOutUp.duration(180)}
       style={styles.toastContainer}
     >
       <TouchableOpacity
@@ -35,7 +35,7 @@ export const CelebrationToast: React.FC<CelebrationToastProps> = ({
         onPress={onDismiss}
         activeOpacity={0.8}
       >
-        <Text style={styles.toastText}>{message}</Text>
+        <Text style={styles.toastText}>[ {message.toUpperCase()} ]</Text>
       </TouchableOpacity>
     </Animated.View>
   );
@@ -45,30 +45,26 @@ const styles = StyleSheet.create({
   toastContainer: {
     position: 'absolute',
     top: 50,
-    left: 20,
-    right: 20,
+    left: 16,
+    right: 16,
     alignItems: 'center',
     zIndex: 100,
   },
   toastPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#064E3B',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 24,
-    borderWidth: 1.5,
-    borderColor: '#10B981',
-    shadowColor: '#10B981',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.35,
-    shadowRadius: 10,
-    elevation: 8,
+    backgroundColor: '#000000',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 2,
+    borderWidth: 2,
+    borderColor: '#00FF66',
   },
   toastText: {
-    color: '#D1FAE5',
-    fontSize: 14,
-    fontWeight: '800',
-    letterSpacing: 0.3,
+    color: '#00FF66',
+    fontSize: 12,
+    fontWeight: '900',
+    letterSpacing: 1,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
 });

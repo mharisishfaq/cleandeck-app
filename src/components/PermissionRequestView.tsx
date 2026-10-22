@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { BRUTALIST } from '../theme/brutalist';
 import type { GalleryPermissionState } from '../types/media';
 
 interface PermissionRequestViewProps {
@@ -27,119 +28,130 @@ export const PermissionRequestView: React.FC<PermissionRequestViewProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Gamified Header Badge */}
-      <View style={styles.badgeContainer}>
-        <Text style={styles.badgeEmoji}>⚡</Text>
-        <Text style={styles.badgeText}>STORAGE MISSION: LEVEL 1</Text>
+      {/* Brutalist System Header */}
+      <View style={styles.header}>
+        <View style={styles.terminalTag}>
+          <Text style={styles.terminalTagText}>// CLEANDECK OS GATEWAY</Text>
+        </View>
+        <Text style={styles.title}>STORAGE_ACCESS</Text>
+        <Text style={styles.titleSub}>PERMISSION VERIFICATION REQUIRED</Text>
       </View>
 
-      {/* Hero Icon */}
-      <View style={styles.iconCircle}>
-        <Text style={styles.iconGraphic}>🧹</Text>
+      {/* Hero Terminal Card */}
+      <View style={styles.terminalCard}>
+        <View style={styles.terminalCardHeader}>
+          <Text style={styles.terminalCardHeaderDot}>●</Text>
+          <Text style={styles.terminalCardHeaderText}>SECURITY PROTOCOL 01</Text>
+        </View>
+        <Text style={styles.terminalCardBody}>
+          CleanDeck operates as an on-device storage reclamation tool. Direct read access
+          to your media index is required to compute asset sizes, detect redundancies,
+          and stage files for batch removal.
+        </Text>
       </View>
 
-      {/* Title & Subtitle */}
-      <Text style={styles.title}>Unlock Your Gallery</Text>
-      <Text style={styles.subtitle}>
-        CleanUp needs access to your photos and videos to analyze clutter, find
-        heavy files, and help you declutter storage.
-      </Text>
-
-      {/* Permission Perks / Guarantees */}
-      <View style={styles.perksList}>
-        <View style={styles.perkRow}>
-          <Text style={styles.perkIcon}>📸</Text>
-          <View style={styles.perkContent}>
-            <Text style={styles.perkTitle}>Scan Photos & Videos</Text>
-            <Text style={styles.perkDescription}>
-              Chronologically loads media in lightweight 20-item batches.
+      {/* Hardware Protocols */}
+      <View style={styles.protocolList}>
+        <View style={styles.protocolItem}>
+          <View style={styles.protocolIndexBox}>
+            <Text style={styles.protocolIndexText}>01</Text>
+          </View>
+          <View style={styles.protocolContent}>
+            <Text style={styles.protocolTitle}>LOCAL SCANNING ONLY</Text>
+            <Text style={styles.protocolDesc}>
+              Media is indexed on-device in lightweight cursor-paginated chunks.
             </Text>
           </View>
         </View>
 
-        <View style={styles.perkRow}>
-          <Text style={styles.perkIcon}>🗑️</Text>
-          <View style={styles.perkContent}>
-            <Text style={styles.perkTitle}>Safe Native Deletion</Text>
-            <Text style={styles.perkDescription}>
-              Always prompts your OS confirmation before removing any photo.
+        <View style={styles.protocolItem}>
+          <View style={styles.protocolIndexBox}>
+            <Text style={styles.protocolIndexText}>02</Text>
+          </View>
+          <View style={styles.protocolContent}>
+            <Text style={styles.protocolTitle}>STAGE & REVIEW GATEWAY</Text>
+            <Text style={styles.protocolDesc}>
+              Swipes only stage files in a temporary review queue. No immediate deletion.
             </Text>
           </View>
         </View>
 
-        <View style={styles.perkRow}>
-          <Text style={styles.perkIcon}>🔒</Text>
-          <View style={styles.perkContent}>
-            <Text style={styles.perkTitle}>100% Private & On-Device</Text>
-            <Text style={styles.perkDescription}>
-              Your media never leaves your phone or touches external servers.
+        <View style={styles.protocolItem}>
+          <View style={styles.protocolIndexBox}>
+            <Text style={styles.protocolIndexText}>03</Text>
+          </View>
+          <View style={styles.protocolContent}>
+            <Text style={styles.protocolTitle}>OS SAFETY SHIELD</Text>
+            <Text style={styles.protocolDesc}>
+              Final batch removal always triggers your device operating system dialog.
             </Text>
           </View>
         </View>
       </View>
 
-      {/* Status Warning if Denied */}
+      {/* Denied Status Warning */}
       {isDeniedPermanently && (
         <View style={styles.deniedBanner}>
-          <Text style={styles.deniedText}>
-            ⚠️ Permission was declined. Please enable Photo Library access in your
-            device Settings.
+          <Text style={styles.deniedTag}>[ ! ] ERROR: PERMISSION_BLOCKED</Text>
+          <Text style={styles.deniedDesc}>
+            Access was declined at system level. Open device settings to enable Photo Library
+            read permissions.
           </Text>
         </View>
       )}
 
-      {/* Action Buttons */}
-      <View style={styles.actionContainer}>
+      {/* Action Block */}
+      <View style={styles.actionSection}>
         {permission.isLoading ? (
-          <View style={styles.loadingWrapper}>
-            <ActivityIndicator size="large" color="#10B981" />
-            <Text style={styles.loadingText}>Checking system permissions...</Text>
+          <View style={styles.loadingBox}>
+            <ActivityIndicator size="small" color={BRUTALIST.colors.accent} />
+            <Text style={styles.loadingText}>[ QUERYING SYSTEM PERMISSIONS... ]</Text>
           </View>
         ) : isDeniedPermanently ? (
           <>
             <TouchableOpacity
-              style={styles.primaryButton}
+              style={styles.primaryBtn}
               onPress={onOpenSettings}
-              activeOpacity={0.8}
+              activeOpacity={0.85}
             >
-              <Text style={styles.primaryButtonText}>Open Device Settings</Text>
+              <Text style={styles.primaryBtnText}>[ OPEN SYSTEM SETTINGS ]</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.secondaryButton}
+              style={styles.secondaryBtn}
               onPress={onRetry}
-              activeOpacity={0.7}
+              activeOpacity={0.75}
             >
-              <Text style={styles.secondaryButtonText}>I Enabled It, Refresh</Text>
+              <Text style={styles.secondaryBtnText}>[ RE-CHECK PERMISSIONS ]</Text>
             </TouchableOpacity>
           </>
         ) : (
           <>
             <TouchableOpacity
-              style={styles.primaryButton}
+              style={styles.primaryBtn}
               onPress={onRequestPermission}
-              activeOpacity={0.8}
+              activeOpacity={0.85}
             >
-              <Text style={styles.primaryButtonText}>Grant Gallery Access</Text>
+              <Text style={styles.primaryBtnText}>[ GRANT GALLERY ACCESS ]</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.secondaryButton}
+              style={styles.secondaryBtn}
               onPress={onOpenSettings}
-              activeOpacity={0.7}
+              activeOpacity={0.75}
             >
-              <Text style={styles.secondaryButtonText}>Open Settings</Text>
+              <Text style={styles.secondaryBtnText}>[ OPEN SETTINGS ]</Text>
             </TouchableOpacity>
           </>
         )}
 
         {onTryDemoMode && (
           <TouchableOpacity
-            style={styles.demoButton}
+            style={styles.demoBtn}
             onPress={onTryDemoMode}
-            activeOpacity={0.7}
+            activeOpacity={0.8}
           >
-            <Text style={styles.demoButtonText}>✨ Try Demo Mode (18 Sample Media)</Text>
+            <Text style={styles.demoBtnText}>[ LAUNCH SANDBOX DEMO (18 ITEMS) ]</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -150,163 +162,211 @@ export const PermissionRequestView: React.FC<PermissionRequestViewProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
-    paddingHorizontal: 24,
-    paddingTop: 60,
-    paddingBottom: 40,
+    backgroundColor: BRUTALIST.colors.bg,
+    paddingHorizontal: 20,
+    paddingTop: 64,
+    paddingBottom: 36,
     justifyContent: 'space-between',
   },
-  badgeContainer: {
-    flexDirection: 'row',
-    alignSelf: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(99, 102, 241, 0.15)',
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(99, 102, 241, 0.4)',
-  },
-  badgeEmoji: {
-    fontSize: 14,
-    marginRight: 6,
-  },
-  badgeText: {
-    color: '#818CF8',
-    fontSize: 12,
-    fontWeight: '700',
-    letterSpacing: 1,
-  },
-  iconCircle: {
-    alignSelf: 'center',
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    backgroundColor: 'rgba(16, 185, 129, 0.12)',
-    borderWidth: 2,
-    borderColor: '#10B981',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 16,
-  },
-  iconGraphic: {
-    fontSize: 44,
-  },
-  title: {
-    color: '#F8FAFC',
-    fontSize: 28,
-    fontWeight: '800',
-    textAlign: 'center',
+  header: {
     marginBottom: 8,
   },
-  subtitle: {
-    color: '#94A3B8',
-    fontSize: 15,
-    textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: 20,
+  terminalTag: {
+    alignSelf: 'flex-start',
+    backgroundColor: BRUTALIST.colors.surfaceRaised,
+    borderWidth: BRUTALIST.borders.thin,
+    borderColor: BRUTALIST.colors.border,
     paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: BRUTALIST.radii.xs,
+    marginBottom: 10,
   },
-  perksList: {
-    backgroundColor: '#1E293B',
-    borderRadius: 18,
-    padding: 16,
-    gap: 16,
-    borderWidth: 1,
-    borderColor: '#334155',
-  },
-  perkRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  perkIcon: {
-    fontSize: 22,
-    marginRight: 12,
-    marginTop: 2,
-  },
-  perkContent: {
-    flex: 1,
-  },
-  perkTitle: {
-    color: '#F1F5F9',
-    fontSize: 15,
-    fontWeight: '600',
-    marginBottom: 2,
-  },
-  perkDescription: {
-    color: '#94A3B8',
-    fontSize: 13,
-    lineHeight: 18,
-  },
-  deniedBanner: {
-    backgroundColor: 'rgba(239, 68, 68, 0.15)',
-    borderColor: '#EF4444',
-    borderWidth: 1,
-    borderRadius: 12,
-    padding: 12,
-    marginTop: 12,
-  },
-  deniedText: {
-    color: '#FCA5A5',
-    fontSize: 13,
-    lineHeight: 18,
-    textAlign: 'center',
-  },
-  actionContainer: {
-    marginTop: 20,
-    gap: 12,
-  },
-  loadingWrapper: {
-    alignItems: 'center',
-    paddingVertical: 16,
-  },
-  loadingText: {
-    color: '#94A3B8',
-    marginTop: 8,
-    fontSize: 14,
-  },
-  primaryButton: {
-    backgroundColor: '#10B981',
-    borderRadius: 14,
-    paddingVertical: 16,
-    alignItems: 'center',
-    shadowColor: '#10B981',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  primaryButtonText: {
-    color: '#0F172A',
-    fontSize: 16,
+  terminalTagText: {
+    color: BRUTALIST.colors.accent,
+    fontFamily: BRUTALIST.typography.mono,
+    fontSize: 10,
     fontWeight: '700',
+    letterSpacing: 1.2,
   },
-  secondaryButton: {
-    backgroundColor: '#1E293B',
-    borderRadius: 14,
-    paddingVertical: 14,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#334155',
+  title: {
+    color: BRUTALIST.colors.text,
+    fontSize: 26,
+    fontWeight: '900',
+    fontFamily: BRUTALIST.typography.mono,
+    letterSpacing: 0.5,
   },
-  secondaryButtonText: {
-    color: '#94A3B8',
-    fontSize: 15,
-    fontWeight: '600',
-  },
-  demoButton: {
-    backgroundColor: 'rgba(99, 102, 241, 0.15)',
-    borderRadius: 14,
-    paddingVertical: 14,
-    alignItems: 'center',
-    borderWidth: 1.5,
-    borderColor: '#6366F1',
+  titleSub: {
+    color: BRUTALIST.colors.textDim,
+    fontSize: 11,
+    fontFamily: BRUTALIST.typography.mono,
+    letterSpacing: 1,
     marginTop: 4,
   },
-  demoButtonText: {
-    color: '#818CF8',
-    fontSize: 14,
+  terminalCard: {
+    backgroundColor: BRUTALIST.colors.surface,
+    borderWidth: BRUTALIST.borders.heavy,
+    borderColor: BRUTALIST.colors.borderStark,
+    borderRadius: BRUTALIST.radii.xs,
+    padding: 16,
+    ...BRUTALIST.shadows.hardBox,
+  },
+  terminalCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
+    borderBottomWidth: BRUTALIST.borders.thin,
+    borderBottomColor: BRUTALIST.colors.border,
+    paddingBottom: 6,
+  },
+  terminalCardHeaderDot: {
+    color: BRUTALIST.colors.accent,
+    fontSize: 10,
+  },
+  terminalCardHeaderText: {
+    color: BRUTALIST.colors.textDim,
+    fontFamily: BRUTALIST.typography.mono,
+    fontSize: 10,
     fontWeight: '700',
-    letterSpacing: 0.3,
+    letterSpacing: 1.2,
+  },
+  terminalCardBody: {
+    color: BRUTALIST.colors.text,
+    fontFamily: BRUTALIST.typography.mono,
+    fontSize: 12,
+    lineHeight: 18,
+  },
+  protocolList: {
+    gap: 10,
+  },
+  protocolItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: BRUTALIST.colors.surface,
+    borderWidth: BRUTALIST.borders.thin,
+    borderColor: BRUTALIST.colors.border,
+    borderRadius: BRUTALIST.radii.xs,
+    padding: 12,
+    gap: 12,
+  },
+  protocolIndexBox: {
+    width: 32,
+    height: 32,
+    backgroundColor: BRUTALIST.colors.surfaceRaised,
+    borderWidth: BRUTALIST.borders.thin,
+    borderColor: BRUTALIST.colors.borderLight,
+    borderRadius: BRUTALIST.radii.xs,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  protocolIndexText: {
+    color: BRUTALIST.colors.accent,
+    fontFamily: BRUTALIST.typography.mono,
+    fontSize: 12,
+    fontWeight: '900',
+  },
+  protocolContent: {
+    flex: 1,
+  },
+  protocolTitle: {
+    color: BRUTALIST.colors.text,
+    fontFamily: BRUTALIST.typography.mono,
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+    marginBottom: 2,
+  },
+  protocolDesc: {
+    color: BRUTALIST.colors.textDim,
+    fontFamily: BRUTALIST.typography.mono,
+    fontSize: 10,
+    lineHeight: 14,
+  },
+  deniedBanner: {
+    backgroundColor: BRUTALIST.colors.dangerBg,
+    borderWidth: BRUTALIST.borders.normal,
+    borderColor: BRUTALIST.colors.danger,
+    borderRadius: BRUTALIST.radii.xs,
+    padding: 12,
+  },
+  deniedTag: {
+    color: BRUTALIST.colors.danger,
+    fontFamily: BRUTALIST.typography.mono,
+    fontSize: 11,
+    fontWeight: '800',
+    marginBottom: 4,
+  },
+  deniedDesc: {
+    color: BRUTALIST.colors.text,
+    fontFamily: BRUTALIST.typography.mono,
+    fontSize: 10,
+    lineHeight: 14,
+  },
+  actionSection: {
+    gap: 10,
+  },
+  loadingBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    paddingVertical: 14,
+    backgroundColor: BRUTALIST.colors.surface,
+    borderWidth: BRUTALIST.borders.thin,
+    borderColor: BRUTALIST.colors.border,
+    borderRadius: BRUTALIST.radii.xs,
+  },
+  loadingText: {
+    color: BRUTALIST.colors.accent,
+    fontFamily: BRUTALIST.typography.mono,
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 0.8,
+  },
+  primaryBtn: {
+    backgroundColor: BRUTALIST.colors.accent,
+    borderWidth: BRUTALIST.borders.heavy,
+    borderColor: BRUTALIST.colors.accent,
+    borderRadius: BRUTALIST.radii.xs,
+    paddingVertical: 15,
+    alignItems: 'center',
+    ...BRUTALIST.shadows.hardAccent,
+  },
+  primaryBtnText: {
+    color: BRUTALIST.colors.accentText,
+    fontFamily: BRUTALIST.typography.mono,
+    fontSize: 13,
+    fontWeight: '900',
+    letterSpacing: 0.8,
+  },
+  secondaryBtn: {
+    backgroundColor: BRUTALIST.colors.surface,
+    borderWidth: BRUTALIST.borders.normal,
+    borderColor: BRUTALIST.colors.borderLight,
+    borderRadius: BRUTALIST.radii.xs,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  secondaryBtnText: {
+    color: BRUTALIST.colors.text,
+    fontFamily: BRUTALIST.typography.mono,
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+  },
+  demoBtn: {
+    backgroundColor: BRUTALIST.colors.surfaceRaised,
+    borderWidth: BRUTALIST.borders.thin,
+    borderColor: BRUTALIST.colors.border,
+    borderRadius: BRUTALIST.radii.xs,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  demoBtnText: {
+    color: BRUTALIST.colors.accent,
+    fontFamily: BRUTALIST.typography.mono,
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.8,
   },
 });

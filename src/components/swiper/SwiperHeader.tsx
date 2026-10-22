@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { hapticFeedback } from '../../services/hapticsService';
 
 interface SwiperHeaderProps {
@@ -35,8 +35,7 @@ const SwiperHeaderInner: React.FC<SwiperHeaderProps> = ({
         activeOpacity={0.7}
         accessibilityLabel="Pause gallery review"
       >
-        <Text style={styles.pauseIcon}>⏸</Text>
-        <Text style={styles.pauseText}>Pause</Text>
+        <Text style={styles.pauseText}>[ PAUSE ]</Text>
       </TouchableOpacity>
 
       {/* 2. Center: Live Pending Deletion Counter Pill (Clickable) */}
@@ -57,8 +56,9 @@ const SwiperHeaderInner: React.FC<SwiperHeaderProps> = ({
           ]}
           numberOfLines={1}
         >
-          🗑️ {pendingDeleteCount} {pendingDeleteCount === 1 ? 'item' : 'items'} •{' '}
-          {pendingDeleteSizeFormatted}
+          {hasPendingItems
+            ? `[ STAGED: ${pendingDeleteCount} // ${pendingDeleteSizeFormatted} ]`
+            : '[ QUEUE: 0 ]'}
         </Text>
       </TouchableOpacity>
 
@@ -79,7 +79,7 @@ const SwiperHeaderInner: React.FC<SwiperHeaderProps> = ({
             !hasPendingItems && styles.deleteAllTextDisabled,
           ]}
         >
-          Delete All
+          [ PURGE ALL ]
         </Text>
       </TouchableOpacity>
     </View>
@@ -93,80 +93,78 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
     paddingVertical: 10,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#000000',
+    borderBottomWidth: 1.5,
+    borderBottomColor: '#1A1A1A',
   },
   pauseButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#1E293B',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#334155',
-    gap: 6,
-  },
-  pauseIcon: {
-    color: '#94A3B8',
-    fontSize: 12,
+    backgroundColor: '#0A0A0A',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 3,
+    borderWidth: 1.5,
+    borderColor: '#333333',
   },
   pauseText: {
-    color: '#E2E8F0',
-    fontSize: 12,
-    fontWeight: '700',
+    color: '#8E8E8E',
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   counterPill: {
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 20,
-    borderWidth: 1,
-    maxWidth: '48%',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 3,
+    borderWidth: 1.5,
+    maxWidth: '52%',
     alignItems: 'center',
     justifyContent: 'center',
   },
   activeCounterPill: {
-    backgroundColor: 'rgba(239, 68, 68, 0.12)',
-    borderColor: 'rgba(239, 68, 68, 0.4)',
+    backgroundColor: '#000000',
+    borderColor: '#FF3333',
   },
   emptyCounterPill: {
-    backgroundColor: '#1E293B',
-    borderColor: '#334155',
+    backgroundColor: '#0A0A0A',
+    borderColor: '#262626',
   },
   counterPillText: {
-    fontSize: 12,
-    fontWeight: '700',
-    letterSpacing: 0.3,
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   activeCounterText: {
-    color: '#F87171',
+    color: '#FF3333',
   },
   emptyCounterText: {
-    color: '#64748B',
+    color: '#555555',
   },
   deleteAllButton: {
-    backgroundColor: 'rgba(239, 68, 68, 0.15)',
+    backgroundColor: '#000000',
     borderWidth: 1.5,
-    borderColor: '#EF4444',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 20,
+    borderColor: '#FF3333',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 3,
     alignItems: 'center',
     justifyContent: 'center',
   },
   deleteAllButtonDisabled: {
-    backgroundColor: 'rgba(30, 41, 59, 0.5)',
-    borderColor: '#334155',
-    opacity: 0.45,
+    borderColor: '#262626',
+    opacity: 0.35,
   },
   deleteAllButtonText: {
-    color: '#EF4444',
-    fontSize: 12,
+    color: '#FF3333',
+    fontSize: 11,
     fontWeight: '800',
-    letterSpacing: 0.3,
+    letterSpacing: 0.8,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   deleteAllTextDisabled: {
-    color: '#64748B',
+    color: '#555555',
   },
 });
